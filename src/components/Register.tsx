@@ -33,7 +33,7 @@ export default function Register() {
         {/* Google Registration */}
         <button
           onClick={handleGoogleRegister}
-          className="w-full flex items-center justify-center mb-6 py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition duration-200"
+          className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition duration-200"
         >
           <img
             src="/images/google.png"
@@ -43,7 +43,7 @@ export default function Register() {
           Sign up with Google
         </button>
 
-        <div className="relative flex items-center mb-6">
+        <div className="relative flex items-center mb-3 mt-2">
           <span className="flex-grow border-t border-gray-300"></span>
           <span className="mx-4 text-gray-500">or</span>
           <span className="flex-grow border-t border-gray-300"></span>
@@ -131,7 +131,7 @@ export default function Register() {
           </div>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
+        <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
           <Link
             href="/login"

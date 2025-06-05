@@ -212,7 +212,7 @@ export default function Header() {
                   <Link
                     href="/register"
                     aria-label="Sign up"
-                    className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-300 ease-in-out"
+                    className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Sign Up
