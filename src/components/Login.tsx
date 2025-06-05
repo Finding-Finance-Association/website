@@ -31,7 +31,7 @@ export default function Login() {
             className="w-full flex items-center justify-center mb-6 py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition duration-200"
           >
             <img
-              src="/google.png"
+              src="/images/google.png"
               alt="Google logo"
               className="mr-2 h-5 w-5"
             />
