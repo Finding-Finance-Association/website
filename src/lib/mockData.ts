@@ -1,0 +1,51 @@
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+}
+
+export const getCourses = (): Course[] => [
+  {
+    id: "finance-basics",
+    title: "Finance Basics",
+    description: "Learn the fundamentals of personal finance and budgeting.",
+    thumbnail: "/thumbnails/personal-finance-basics.jpg",
+  },
+  {
+    id: "investing-101",
+    title: "Investing 101",
+    description: "Get started with investing and growing your money.",
+    thumbnail: "/thumbnails/investing.png",
+  },
+  {
+    id: "credit-score",
+    title: "Understanding Credit Scores",
+    description: "How credit scores work and how to improve yours.",
+    thumbnail: "/thumbnails/credit.jpg",
+  },
+];
+
+
+export interface Module {
+  id: string;
+  title: string;
+}
+
+export interface DetailedCourse extends Course {
+  modules: Module[];
+}
+
+export const getCourseById = (id: string): DetailedCourse | undefined => {
+  const course = getCourses().find((c) => c.id === id);
+  if (!course) return undefined;
+
+  return {
+    ...course,
+    modules: [
+      { id: "intro", title: "Introduction to the Course" },
+      { id: "core", title: "Core Financial Principles" },
+      { id: "summary", title: "Course Summary & Next Steps" },
+    ],
+  };
+};
