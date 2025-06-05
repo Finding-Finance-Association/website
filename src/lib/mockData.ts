@@ -4,6 +4,7 @@ export interface Course {
   description: string;
   thumbnail: string;
   category?: string;
+  hours?: number;
 }
 
 export const getCourses = (): Course[] => [
@@ -13,6 +14,7 @@ export const getCourses = (): Course[] => [
     description: "Learn the fundamentals of personal finance and budgeting.",
     thumbnail: "/thumbnails/personal-finance-basics.jpg",
     category: "General",
+    hours: 8,
   },
   {
     id: "investing-101",
@@ -20,6 +22,7 @@ export const getCourses = (): Course[] => [
     description: "Get started with investing and growing your money.",
     thumbnail: "/thumbnails/investing.png",
     category: "Investing",
+    hours: 10,
   },
   {
     id: "credit-score",
@@ -27,6 +30,7 @@ export const getCourses = (): Course[] => [
     description: "How credit scores work and how to improve yours.",
     thumbnail: "/thumbnails/credit.jpg",
     category: "Credit",
+    hours: 6,
   },
 ];
 
