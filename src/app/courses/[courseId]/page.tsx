@@ -122,14 +122,18 @@ export default function CourseDetailsPage() {
                 </p>
               </div>
             </div>
+
+            
+
             <div className="flex items-center gap-3">
-              <div className="text-sm text-gray-600">Progress: 65%</div>
+              {/* Progress Bar */}
+              {/* <div className="text-sm text-gray-600">Progress: 85%</div>
               <div className="w-32 h-2 bg-gray-200 rounded-full">
                 <div className="w-16 h-2 bg-emerald-500 rounded-full"></div>
-              </div>
+              </div> */}
               <button
                 onClick={handleGoBack}
-                className="text-gray-600 hover:text-emerald-600 transition-colors px-3 py-1 rounded-lg hover:bg-gray-100"
+                className="bg-slate-200 text-black hover:text-emerald-600 transition-colors px-3 py-1 rounded-lg hover:bg-gray-100"
               >
                 Exit
               </button>
@@ -353,45 +357,8 @@ export default function CourseDetailsPage() {
                       </div>
                     </>
                   )}
-
-                  {/* Quiz Integration
-                  {activeTab === "quiz" ? (
-                    <QuizComponent
-                      questions={course.quizzes}
-                      isEnrolled={enrolled}
-                      onSubmit={(results) => {
-                        console.log("Quiz completed:", results);
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )} */}
                 </motion.div>
               </div>
-
-              {/* Bottom Navigation */}
-              {activeTab !== "quiz" && (
-                <div className="bg-white border-t border-gray-200 p-4">
-                  <div className="max-w-4xl mx-auto flex items-center justify-between">
-                    <button
-                      disabled={activeModule === 0 && activeLesson === 0}
-                      className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <FiChevronLeft className="w-4 h-4" />
-                      Previous
-                    </button>
-
-                    <div className="text-sm text-gray-500">
-                      Lesson {activeLesson + 1} of 3
-                    </div>
-
-                    <button className="flex items-center gap-2 px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
-                      Next
-                      <FiPlay className="w-4 h-4 rotate-180" />
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
