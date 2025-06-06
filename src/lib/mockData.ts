@@ -34,6 +34,14 @@ export const getCourses = (): Course[] => [
   },
 ];
 
+export interface Question {
+  id: string;
+  type: "mcq" | "text";
+  question: string;
+  options?: string[];
+  correctAnswer: string;
+}
+
 
 export interface Module {
   id: string;
@@ -42,6 +50,7 @@ export interface Module {
 
 export interface DetailedCourse extends Course {
   modules: Module[];
+  quizzes: Question[];
 }
 
 export const getCourseById = (id: string): DetailedCourse | undefined => {
@@ -55,5 +64,20 @@ export const getCourseById = (id: string): DetailedCourse | undefined => {
       { id: "core", title: "Core Financial Principles" },
       { id: "summary", title: "Course Summary & Next Steps" },
     ],
+    quizzes: [
+    {
+      id: "1",
+      type: "mcq",
+      question: "Which topic is covered in this course?",
+      options: ["Science", "Finance", "History"],
+      correctAnswer: "Finance",
+    },
+    {
+      id: "2",
+      type: "text",
+      question: "Finance basics includes ____.",
+      correctAnswer: "Budgeting",
+    },
+  ],
   };
 };

@@ -1,4 +1,3 @@
-// src/components/ModuleList.tsx
 
 "use client";
 import Link from "next/link";
