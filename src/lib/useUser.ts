@@ -1,9 +1,9 @@
 export function useUser() {
   return {
     userId: "user123",
-    enrolledCourseIds: ["finance-basics"], 
+    enrolledCourseIds: ["resume-101"], 
     isEnrolled: (courseId: string) => {
-      return ["finance-basics"].includes(courseId);
+      return ["resume-101"].includes(courseId);
     },
   };
 }
