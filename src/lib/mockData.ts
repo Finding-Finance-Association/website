@@ -26,9 +26,9 @@ export const getCourses = (): Course[] => [
   },
   {
     id: "credit-score",
-    title: "Understanding Credit Scores",
+    title: "Resume",
     description: "How credit scores work and how to improve yours.",
-    thumbnail: "/thumbnails/credit.jpg",
+    thumbnail: "/thumbnails/resume_edit.jpeg",
     category: "Credit",
     hours: 6,
   },
@@ -60,7 +60,7 @@ export const getCourseById = (id: string): DetailedCourse | undefined => {
   return {
     ...course,
     modules: [
-      { id: "intro", title: "Introduction to the Course" },
+      { id: "section 1", title: "Introduction to the Course" },
       { id: "core", title: "Core Financial Principles" },
       { id: "summary", title: "Course Summary & Next Steps" },
     ],
