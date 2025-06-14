@@ -1,10 +1,11 @@
-import Image from "next/image";
+import Image from 'next/image';
+
 
 export default function Footer() {
     return (
         <footer className="w-full bg-slate-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* <div className="flex items-center justify-between h-16">      
+                <div className="flex items-center justify-between h-16">      
                     <div className="flex items-center space-x-3 group">
                         <Image
                         src="/images/ffa-logo.png"
@@ -17,7 +18,7 @@ export default function Footer() {
                             Finding Finance Association
                         </span>
                     </div>    
-                </div> */}
+                </div>
 
                 {/*TODO: icons ? react-icons library*/}
                 <div className="flex flex-row items-centeralign-top">
