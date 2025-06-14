@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { Course } from "@/lib/mockData";
 import { motion } from "framer-motion";
 
@@ -13,11 +14,13 @@ export default function CourseCard({ course }: Props) {
       whileHover={{ scale: 1.03 }}
       className="group relative bg-white rounded-xl shadow-lg overflow-hidden transition h-full flex flex-col"
     >
-      <div className="aspect-[16/10] overflow-hidden">
-        <img
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
           src={course.thumbnail}
           alt={course.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          sizes="100vw"
         />
       </div>
 
