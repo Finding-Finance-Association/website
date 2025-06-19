@@ -11,25 +11,17 @@ import {
   FiPlay,
   FiCheck,
   FiClock,
-  FiUsers,
-  FiStar,
   FiBookOpen,
-  FiTrendingUp,
   FiAward,
   FiChevronLeft,
-  FiShare2,
-  FiHeart,
   FiMenu,
   FiX,
-  FiPlayCircle,
-  FiFileText,
   FiCheckCircle,
   FiTarget,
   FiDownload,
-  FiMonitor,
-  FiSmartphone,
 } from "react-icons/fi";
 import QuizComponent from "@/components/QuizComponent";
+import ReactMarkdown from "react-markdown";
 
 export default function CourseDetailsPage() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -43,9 +35,10 @@ export default function CourseDetailsPage() {
   const [activeModule, setActiveModule] = useState(0);
   const [activeLesson, setActiveLesson] = useState(0);
   const [activeTab, setActiveTab] = useState<"lesson" | "quiz">("lesson");
+
   const [completedModules, setCompletedModules] = useState<Set<number>>(
-    new Set([0, 1, 2])
-  ); // Mock completed modules
+    new Set([0, 1])
+  );
 
   useEffect(() => {
     if (!course) return;
@@ -67,7 +60,8 @@ export default function CourseDetailsPage() {
             Course Not Found
           </h2>
           <p className="text-gray-600 mb-8 max-w-md">
-            The course you're looking for doesn't exist or may have been moved.
+            The course you&apos;re looking for doesn&apos;t exist or may have
+            been moved.
           </p>
           <Link
             href="/courses"
@@ -301,7 +295,7 @@ export default function CourseDetailsPage() {
                                 className="ml-4 space-y-2 overflow-hidden"
                               >
                                 {/* Quiz Button */}
-                                {module.quizId && (
+                                {module.contentType === "quiz" && (
                                   <button
                                     onClick={() => setActiveTab("quiz")}
                                     className={`w-full text-left p-3 rounded-lg text-sm transition-all ${
@@ -365,10 +359,10 @@ export default function CourseDetailsPage() {
                       </h2>
                     </div>
 
-                    {currentModule?.contentType === "video" && (
+                    {/* {currentModule?.contentType === "video" && (
                       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
                         <div className="aspect-video bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative group flex items-center justify-center">
-                          {/* Play Button */}
+                    
                           <button className="absolute inset-0 bg-black/20 hover:bg-black/30 transition-all duration-300 flex items-center justify-center group-hover:bg-black/40">
                             <motion.div
                               whileHover={{ scale: 1.1 }}
@@ -378,7 +372,6 @@ export default function CourseDetailsPage() {
                             </motion.div>
                           </button>
 
-                          {/* Text below Play Icon */}
                           <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 mt-4 text-center text-white z-10">
                             <motion.div
                               initial={{ scale: 0.8, opacity: 0 }}
@@ -395,61 +388,208 @@ export default function CourseDetailsPage() {
                           </div>
                         </div>
                       </div>
-                    )}
+                    )} */}
 
                     {/* Lesson Content */}
-                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 mb-6">
-                      <div className="prose prose-gray max-w-none">
-                        <p className="text-gray-700 leading-relaxed text-lg mb-6">
-                          This is where the main lesson content would be
-                          displayed. The content changes based on the selected
-                          module and lesson, providing comprehensive learning
-                          materials tailored to each section.
-                        </p>
+                    <div className="space-y-6">
+                      {currentModule?.contentBlocks?.map((block) => {
+                        switch (block.type) {
+                          case "video":
+                            return (
+                              <div
+                                key={block.id}
+                                className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
+                              >
+                                <div className="aspect-video bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative group">
+                                  {block.url ? (
+                                    <iframe
+                                      src={block.url}
+                                      title={block.title || "Video Lesson"}
+                                      className="absolute top-0 left-0 w-full h-full"
+                                      frameBorder="0"
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    />
+                                  ) : (
+                                    // Fallback play button for videos without URLs
+                                    <div className="flex items-center justify-center h-full">
+                                      <button className="absolute inset-0 bg-black/20 hover:bg-black/30 transition-all duration-300 flex items-center justify-center group-hover:bg-black/40">
+                                        <motion.div
+                                          whileHover={{ scale: 1.1 }}
+                                          whileTap={{ scale: 0.95 }}
+                                        >
+                                          <FiPlay className="w-16 h-16 text-white drop-shadow-lg" />
+                                        </motion.div>
+                                      </button>
+                                      <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 mt-4 text-center text-white z-10">
+                                        <h3 className="text-2xl font-medium mb-1">
+                                          {block.title || currentModule?.title}
+                                        </h3>
+                                        <p className="text-gray-300 text-lg">
+                                          Video Lesson
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
 
-                        <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-6">
+                          case "text":
+                            return (
+                              <div
+                                key={block.id}
+                                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
+                              >
+                                <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4">
+                                  {block.html && (
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: block.html,
+                                      }}
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                            );
+
+                          case "markdown":
+                            return (
+                              <div
+                                key={block.id}
+                                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
+                              >
+                                <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4">
+                                  <ReactMarkdown
+                                    components={{
+                                      h3: ({ children }) => (
+                                        <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-6 first:mt-0">
+                                          {children}
+                                        </h3>
+                                      ),
+                                      p: ({ children }) => (
+                                        <p className="text-gray-700 leading-relaxed mb-4">
+                                          {children}
+                                        </p>
+                                      ),
+                                      ul: ({ children }) => (
+                                        <ul className="space-y-2 mb-4">
+                                          {children}
+                                        </ul>
+                                      ),
+                                      li: ({ children }) => (
+                                        <li className="flex items-start gap-2">
+                                          <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
+                                          <span>{children}</span>
+                                        </li>
+                                      ),
+                                      strong: ({ children }) => (
+                                        <strong className="font-semibold text-gray-900">
+                                          {children}
+                                        </strong>
+                                      ),
+                                    }}
+                                  >
+                                    {block.markdown}
+                                  </ReactMarkdown>
+                                </div>
+                              </div>
+                            );
+
+                          case "list":
+                            return (
+                              <div
+                                key={block.id}
+                                className="bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
+                              >
+                                <div className="space-y-3">
+                                  {block.items?.map((item, itemIndex) => (
+                                    <motion.div
+                                      key={itemIndex}
+                                      initial={{ opacity: 0, x: -20 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: itemIndex * 0.1 }}
+                                      className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:border-blue-200 transition-colors duration-200"
+                                    >
+                                      <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                                        <FiCheck className="w-3.5 h-3.5 text-white" />
+                                      </div>
+                                      <span className="text-gray-700 leading-relaxed font-medium">
+                                        {item}
+                                      </span>
+                                    </motion.div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+
+                          case "quote":
+                            return (
+                              <motion.div
+                                key={block.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="relative bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border-l-4 border-blue-500 p-8 rounded-r-2xl shadow-sm hover:shadow-md transition-all duration-300"
+                              >
+                                <blockquote className="text-lg font-medium text-gray-800 italic pl-6 relative z-10">
+                                  {block.text}
+                                </blockquote>
+                              </motion.div>
+                            );
+
+                          case "quiz":
+                            return (
+                              <motion.div
+                                key={block.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-8 rounded-2xl border border-purple-200 shadow-sm hover:shadow-lg transition-all duration-300"
+                              >
+                                <div className="text-center">
+                                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                    <FiCheckCircle className="w-8 h-8 text-white" />
+                                  </div>
+                                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                                    Ready for a Quick Quiz?
+                                  </h3>
+                                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                                    Test your knowledge with this interactive
+                                    quiz and solidify your learning
+                                  </p>
+                                  <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setActiveTab("quiz")}
+                                    className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold"
+                                  >
+                                    <FiPlay className="w-5 h-5" />
+                                    Start Quiz
+                                  </motion.button>
+                                </div>
+                              </motion.div>
+                            );
+
+                          default:
+                            return null;
+                        }
+                      })}
+
+                      {/* Learning Outcome Section - keep this if you want it to appear at the end */}
+                      {currentModule?.outcome && (
+                        <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
                           <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
                             <FiTarget className="w-5 h-5" />
                             Learning Outcome
                           </h4>
                           <p className="text-blue-800">
-                            {currentModule?.outcome ||
-                              "Master the key concepts and apply them practically."}
+                            {currentModule.outcome}
                           </p>
                         </div>
-
-                        <p className="text-gray-700 leading-relaxed mb-4">
-                          Interactive elements, downloadable resources, and
-                          hands-on exercises would be embedded here to enhance
-                          the learning experience.
-                        </p>
-
-                        {/* Action Items */}
-                        <div className="bg-gray-50 p-6 rounded-xl">
-                          <h4 className="font-semibold text-gray-900 mb-3">
-                            What's Next?
-                          </h4>
-                          <ul className="space-y-2 text-gray-700">
-                            <li className="flex items-center gap-2">
-                              <FiCheck className="w-4 h-4 text-emerald-500" />
-                              Complete this lesson
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <FiDownload className="w-4 h-4 text-blue-500" />
-                              Download practice materials
-                            </li>
-                            {currentModule?.quizId && (
-                              <li className="flex items-center gap-2">
-                                <FiCheckCircle className="w-4 h-4 text-purple-500" />
-                                Take the module quiz
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      </div>
+                      )}
                     </div>
 
-                    {/* Navigation */}
                     {/* Navigation */}
                     <div className="flex justify-between items-center">
                       <button
@@ -648,7 +788,7 @@ export default function CourseDetailsPage() {
                   {/* Course Highlights */}
                   <div className="border-t border-gray-100 pt-6">
                     <h4 className="font-semibold text-gray-900 mb-4">
-                      What You'll Get:
+                      What You&apos;ll Get:
                     </h4>
                     <ul className="space-y-3 text-sm">
                       <li className="flex items-center gap-3">

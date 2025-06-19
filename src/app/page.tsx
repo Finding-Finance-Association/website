@@ -1,7 +1,7 @@
 "use client";
 import Header from "@/components/Header";
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import {
   ChevronRight,
@@ -9,8 +9,6 @@ import {
   BookOpen,
   Mail,
   Star,
-  Menu,
-  X,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -225,8 +223,8 @@ export default function Home() {
                   </motion.div>
 
                   <blockquote className="border-l-4 border-green-700 pl-6 italic text-lg md:text-xl text-green-800 text-center">
-                    "Our mission is to demystify the world of finance to help
-                    students gain clarity and ownership over their careers." —
+                    &quot;Our mission is to demystify the world of finance to help
+                    students gain clarity and ownership over their careers.&quot; —
                     Jacob Lebowitz
                   </blockquote>
                 </div>
