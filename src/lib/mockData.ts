@@ -308,46 +308,46 @@ Think about one experience you want to include on your resume.
       outcome: "Tailored resume submission",
       contentBlocks: [
         {
-          id: "video-structure",
+          id: "1",
           type: "video",
           url: "https://drive.google.com/file/d/1s_52DahKNnSW7iVAqpiEzqDOCQTwXG1Y/preview",
           title: "The Structure of a Resume",
         },
         {
-          id: "intro-text",
-          type: "text",
+          id: "2",
+          type: "markdown",
           markdown: `### Resume Length and Overview
 
 Your resume should be **one page MAXIMUM**. Many companies use AI to screen resumes and long ones get discarded. This section provides you with structure and tools to make yours clear, polished, and impactful.`,
         },
         {
-          id: "resume-breakdown",
+          id: "3",
           type: "list",
           items: [
-            "**Heading**: Large bold name, then contact info (email, phone, LinkedIn)",
-            "**Education**: School name (bold), degree (italic), GPA, honors, organizations",
-            "**Experience**: Jobs/internships, with bullet points on what you did and why it mattered",
-            "**Leadership & Involvement**: Community or extracurricular roles with dates and roles",
-            "**Skills**: Hard skills like Excel, PowerPoint, languages",
-            "**Interests**: Personal hobbies to show individuality",
+            "Heading: Large bold name, then contact info (email, phone, LinkedIn)",
+            "Education: School name (bold), degree (italic), GPA, honors, organizations",
+            "Experience: Jobs/internships, with bullet points on what you did and why it mattered",
+            "Leadership & Involvement: Community or extracurricular roles with dates and roles",
+            "Skills: Hard skills like Excel, PowerPoint, languages",
+            "Interests: Personal hobbies to show individuality",
           ],
         },
         {
-          id: "activity-instructions",
-          type: "text",
+          id: "4",
+          type: "markdown",
           markdown: `### Activity: Fill Out the Resume Template
 
 Use the template below and your brainstorm from Section 2. Don’t worry about filtering yet — just start adding everything in. We’ll polish it in the next part.`,
         },
         {
-          id: "textarea-input",
+          id: "5",
           type: "text",
           html: `<h3>Paste your brainstorm here:</h3><textarea class='w-full border border-gray-300 p-3 rounded-md h-40 resize-y' placeholder='Paste or summarize your brainstorm here...'></textarea>`,
         },
         {
-          id: "brainstorm-to-bullets",
-          type: "text",
-          markdown: `## From Brainstorm to Resume: How to Build Great Bullet Points
+          id: "6",
+          type: "markdown",
+          markdown: `### From Brainstorm to Resume: How to Build Great Bullet Points
 
 ### Step 1: Pick What Matters
 Focus on the strongest, most relevant items that show skills, results, or initiative.
@@ -369,22 +369,17 @@ Merge similar points and tighten language.
 > You’re not just listing tasks — you’re showing value.`,
         },
         {
-          id: "template-link",
-          type: "text",
-          html: `<a class='inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition' href='/resume-template.docx' download>Download Resume Template</a>`,
-        },
-        {
-          id: "quote-impact",
+          id: "7",
           type: "quote",
           text: "“Now you’re not just listing tasks — you’re showing value.”",
         },
         {
-          id: "final-note",
-          type: "text",
+          id: "8",
+          type: "markdown",
           markdown: `Once you’ve converted your brainstorm into bullet points, you’re ready to tailor your resume to specific roles. We’ll practice that in the next step.`,
         },
         {
-          id: "quiz-block",
+          id: "9",
           type: "quiz",
           quizId: "resume-polishing-quiz",
         },
