@@ -11,6 +11,26 @@ export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+    useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const res = await fetch("/api/getCourses"); // adjust if it's under a route segment
+        const data = await res.json();
+        console.log("Fetched courses", data.courses)
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    }
+
+    fetchCourses();
+  }, []);
+
+  // Extract unique categories from courses
+  const categories = [
+    "all",
+    ...new Set(allCourses.map((course) => course.category || "General")),
+  ];
+
   const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(search.toLowerCase()) ||
