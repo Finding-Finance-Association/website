@@ -1,21 +1,15 @@
 "use client";
 import { getCourses } from "@/lib/mockData";
 import CourseCard from "@/components/CourseCard";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSearch, FiBookOpen } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 
 export default function CoursesPage() {
   const allCourses = getCourses();
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-  // Extract unique categories from courses
-  const categories = [
-    "all",
-    ...new Set(allCourses.map((course) => course.category || "General")),
-  ];
 
   const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
@@ -46,10 +40,6 @@ export default function CoursesPage() {
       },
     },
   };
-
-  const stats = [
-    { icon: FiBookOpen, label: "Total Courses", value: allCourses.length },
-  ];
 
   return (
     <>
@@ -166,7 +156,7 @@ export default function CoursesPage() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
               {filteredCourses.length > 0 ? (
-                filteredCourses.map((course, index) => (
+                filteredCourses.map((course) => (
                   <motion.div key={course.id} variants={itemVariants} layout>
                     <CourseCard course={course} />
                   </motion.div>
@@ -184,7 +174,7 @@ export default function CoursesPage() {
                     No courses found
                   </h3>
                   <p className="text-gray-600 mb-6 max-w-md">
-                    We couldn't find any courses matching your search criteria.
+                    We couldn&apos;t find any courses matching your search criteria.
                     Try adjusting your filters or search terms.
                   </p>
                   <motion.button

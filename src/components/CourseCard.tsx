@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { Course } from "@/lib/mockData";
 import { motion } from "framer-motion";
 
@@ -11,26 +12,36 @@ export default function CourseCard({ course }: Props) {
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
-      className="group relative bg-white rounded-xl shadow-lg overflow-hidden transition"
+      className="group relative bg-white rounded-xl shadow-lg overflow-hidden transition h-full flex flex-col"
     >
-      <div className="aspect-[16/10] overflow-hidden">
-        <img
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
           src={course.thumbnail}
           alt={course.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          sizes="100vw"
         />
       </div>
-      <div className="p-5 space-y-2">
+
+      <div className="p-5 flex flex-col flex-1">
+        {/* Optional Badge */}
         {/* <span className="text-sm font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full inline-block">
-          Free Course
-        </span> */}
+      Free Course
+    </span> */}
+
         <h2 className="text-lg font-bold text-gray-800">{course.title}</h2>
-        <p className="text-gray-600 text-sm">{course.description}</p>
-        <Link href={`/courses/${course.id}`}>
-          <button className="mt-3 inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition font-medium">
-            View Course
-          </button>
-        </Link>
+        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+          {course.description}
+        </p>
+
+        <div className="mt-auto">
+          <Link href={`/courses/${course.id}`}>
+            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition font-medium">
+              View Course
+            </button>
+          </Link>
+        </div>
       </div>
     </motion.div>
   );
