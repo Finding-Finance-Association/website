@@ -11,6 +11,7 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -384,6 +385,7 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+      <Footer/>
     </div>
   );
 }
