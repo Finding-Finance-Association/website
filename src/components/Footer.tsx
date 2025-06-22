@@ -10,9 +10,9 @@ import {
 
 export default function Footer() {
     return (
-        <footer className="w-full bg-slate-100">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex flex-row space-x-20">
+        <footer className="flex justify-center w-full bg-slate-100">
+            <div className="w-5/6  px-8 sm:px-10 lg:px-12 py-8">
+                <div className="flex flex-row">
 
                     <div className='flex flex-col space-y-3 w-3/6 text-gray-500'>
                         <div>Finding Finance Assosiation is a 501(c)(3) nonprofit organization</div>
@@ -20,8 +20,8 @@ export default function Footer() {
                         <div>1 Brookings Drive, St. Louis, MO 63130</div>
                     </div>
 
-                    <div className="flex flex-row space-x-20 w-3/6">
-                        <div className="flex flex-col space-y-3 text-gray-800">
+                    <div className="flex flex-row w-3/6 ml-auto">
+                        <div className="flex flex-col space-y-3 text-gray-800 ml-auto">
                             <div className="text-gray-500">Navigation</div>
                             <Link href={"/"} className="hover:text-green-700">Home</Link>
                             <Link href={"/courses"} className="hover:text-green-700">Courses</Link>
@@ -29,7 +29,7 @@ export default function Footer() {
                             <Link href={"/newsletters"} className="hover:text-green-700">Newsletters</Link>
                         </div>
 
-                        <div className="flex-col w-2/6 space-y-3 text-gray-800">
+                        <div className="flex-col space-y-3 text-gray-800 ml-auto">
                             <div className="text-gray-500">Links</div>
 
                             <a href={"https://www.instagram.com/washufindingfinance/"}
