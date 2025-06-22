@@ -15,7 +15,7 @@ export default function Footer() {
                 <div className="flex flex-row">
 
                     <div className='flex flex-col space-y-3 w-3/6 text-gray-500'>
-                        <div>Finding Finance Assosiation is a 501(c)(3) nonprofit organization</div>
+                        <div>Finding Finance Association is a 501(c)(3) nonprofit organization</div>
                         <div>We are dedicated to guiding undergraduate students through the diverse career paths in finance</div>
                         <div>1 Brookings Drive, St. Louis, MO 63130</div>
                     </div>
