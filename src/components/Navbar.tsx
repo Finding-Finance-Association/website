@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,7 +13,7 @@ export default function Header() {
   };
 
   const navLinks = [
-    { href: "/about", label: "About" },
+    { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
     { href: "/courses", label: "Courses", highlighted: true },
     { href: "/newsletters", label: "Newsletters" },
@@ -29,7 +30,7 @@ export default function Header() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="flex items-center"
           >
-            <Link href="/" className="flex items-center space-x-3 group">
+            <Link href="/" className="flex items-center space-x-3">
               <motion.div
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
