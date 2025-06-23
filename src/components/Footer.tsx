@@ -11,7 +11,7 @@ import {
 export default function Footer() {
     return (
         <footer className="flex justify-center w-full bg-slate-100">
-            <div className="w-5/6  px-8 sm:px-10 lg:px-12 py-8">
+            <div className="w-4/6 py-8">
                 <div className="flex flex-row">
 
                     <div className='flex flex-col space-y-3 w-3/6 text-gray-500'>

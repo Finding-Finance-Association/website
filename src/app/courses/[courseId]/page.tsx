@@ -5,7 +5,7 @@ import { useUser } from "@/lib/useUser";
 import ModuleList from "@/components/ModuleList";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Header from "@/components/Header";
+import Header from "@/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiPlay,

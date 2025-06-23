@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/Header";
+import Header from "@/components/Navbar";
 import Register from "@/components/Register";
 
 export default function RegisterPage() {
