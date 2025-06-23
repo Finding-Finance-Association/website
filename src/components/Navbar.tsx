@@ -30,7 +30,7 @@ export default function Header() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="flex items-center"
           >
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-3 group">
               <motion.div
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
