@@ -188,8 +188,6 @@ export default function Header() {
                     />
                   </Link>
                 </motion.div>
-              </>
-            )}
           </div>
 
         </nav>
