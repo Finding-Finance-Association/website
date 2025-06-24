@@ -2,7 +2,7 @@
 import { getCourses } from "@/lib/mockData";
 import CourseCard from "@/components/CourseCard";
 import { useState, useEffect } from "react";
-import Header from "@/components/Header";
+import Header from "@/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch } from "react-icons/fi";
 

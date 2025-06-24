@@ -1,11 +1,14 @@
-"use client";
-import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import React from "react";
 
 export default function NewsLetterPage() {
   return (
     <div className="flex flex-col gap-4">
-      <Header />
+      <Navbar/>
+      <main className="min-h-screen">
+      </main>
+      <Footer/>
     </div>
   );
 }

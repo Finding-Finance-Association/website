@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,7 +13,7 @@ export default function Header() {
   };
 
   const navLinks = [
-    { href: "/about", label: "About" },
+    { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
     { href: "/courses", label: "Courses", highlighted: true },
     { href: "/newsletters", label: "Newsletters" },
