@@ -40,6 +40,19 @@ export default function CourseDetailsPage() {
     new Set([0, 1])
   );
 
+  const [userInput, setUserInput] = useState<Record<string, string>>({});
+
+  // Function to handle the textarea input change
+  const handleInputChange = (
+    blockId: string,
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setUserInput((prev) => ({
+      ...prev,
+      [blockId]: e.target.value,
+    }));
+  };
+
   useEffect(() => {
     if (!course) return;
     setEnrolled(user.isEnrolled(courseId));
@@ -358,7 +371,6 @@ export default function CourseDetailsPage() {
                         {currentModule?.title}
                       </h2>
                     </div>
-
                     {/* {currentModule?.contentType === "video" && (
                       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
                         <div className="aspect-video bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative group flex items-center justify-center">
@@ -389,10 +401,75 @@ export default function CourseDetailsPage() {
                         </div>
                       </div>
                     )} */}
-
                     {/* Lesson Content */}
                     <div className="space-y-6">
-                      {currentModule?.contentBlocks?.map((block) => {
+                      {currentModule?.contentBlocks?.map((block, idx, arr) => {
+                        if (
+                          block.type === "markdown" &&
+                          arr[idx + 1]?.type === "list"
+                        ) {
+                          const listBlock = arr[idx + 1];
+                          return (
+                            <div
+                              key={block.id}
+                              className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
+                            >
+                              {/* Render the markdown block */}
+                              <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4 mb-4">
+                                <ReactMarkdown
+                                  components={{
+                                    h3: ({ children }) => (
+                                      <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-6 first:mt-0">
+                                        {children}
+                                      </h3>
+                                    ),
+                                    p: ({ children }) => (
+                                      <p className="text-gray-700 leading-relaxed mb-4">
+                                        {children}
+                                      </p>
+                                    ),
+                                    ul: ({ children }) => (
+                                      <ul className="space-y-2 mb-4">
+                                        {children}
+                                      </ul>
+                                    ),
+                                    li: ({ children }) => (
+                                      <li className="flex items-start gap-2">
+                                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
+                                        <span>{children}</span>
+                                      </li>
+                                    ),
+                                    strong: ({ children }) => (
+                                      <strong className="font-semibold text-gray-900">
+                                        {children}
+                                      </strong>
+                                    ),
+                                  }}
+                                >
+                                  {block.markdown}
+                                </ReactMarkdown>
+                              </div>
+                              {/* Render the list block items */}
+                              <ul className="list-disc pl-6 space-y-2">
+                                {listBlock.items?.map((item, i) => (
+                                  <li key={i} className="text-gray-700">
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          );
+                        }
+
+                        // Skip rendering the list block if it was just merged
+                        if (
+                          block.type === "list" &&
+                          idx > 0 &&
+                          arr[idx - 1]?.type === "markdown"
+                        ) {
+                          return null;
+                        }
+
                         switch (block.type) {
                           case "video":
                             return (
@@ -441,15 +518,20 @@ export default function CourseDetailsPage() {
                                 key={block.id}
                                 className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
                               >
-                                <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4">
-                                  {block.html && (
-                                    <div
-                                      dangerouslySetInnerHTML={{
-                                        __html: block.html,
-                                      }}
-                                    />
-                                  )}
-                                </div>
+                                <div
+                                  className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4"
+                                  dangerouslySetInnerHTML={{
+                                    __html: block.html ?? "",
+                                  }}
+                                />
+                                <textarea
+                                  className="w-full border mt-4 border-gray-300 p-3 rounded-md h-40 resize-y"
+                                  placeholder="Write your notes here..."
+                                  value={userInput[block.id] || ""} 
+                                  onChange={(e) =>
+                                    handleInputChange(block.id, e)
+                                  }
+                                />
                               </div>
                             );
 
@@ -589,7 +671,6 @@ export default function CourseDetailsPage() {
                         </div>
                       )}
                     </div>
-
                     {/* Navigation */}
                     <div className="flex justify-between items-center">
                       <button

@@ -178,8 +178,7 @@ export const resumeCourse: DetailedCourse = {
         {
           id: "1",
           type: "video",
-          // url: "https://drive.google.com/file/d/1jerbSvKNLan8m-WrD16j95Hj_8aSufIy/preview",
-          url: "https://www.youtube.com/embed/ta99S6Fh53c?si=wTmCZBVj6heUjUYR",
+          // url: "https://drive.google.com/file/d/1jerbSvKNLan8m-WrD16j95Hj_8aSufIy/view?usp=drive_link",
           title: "Why Your Resume Actually Matters",
         },
         {
@@ -249,9 +248,9 @@ If you haven’t tracked this yet, no worries — the next step is **brainstormi
 
 Brainstorming is essential, even if you’ve already written resumes before. Spend 5–10 minutes per experience and write down everything you remember about it.
 
-**Helpful prompts:**
+**Helpful tips and questions for brainstorming:**
 - What did you do every day?
-- Who did you interact with?
+- Who did you interact with? What were those conversations about?
 - What results did you help achieve?
 - What skills/tools did you use?
 - What materials can you refer to (emails, slides, docs)?
@@ -260,6 +259,11 @@ Brainstorming is essential, even if you’ve already written resumes before. Spe
         },
         {
           id: "4",
+          type:'markdown',
+          markdown: `**Helpful tips and questions for brainstorming:**`
+        },
+        {
+          id: "5",
           type: "list",
           items: [
             "Education",
@@ -274,7 +278,7 @@ Brainstorming is essential, even if you’ve already written resumes before. Spe
           ],
         },
         {
-          id: "5",
+          id: "6",
           type: "markdown",
           markdown: `
 ### Activity: Brainstorming Through an Experience
@@ -291,12 +295,11 @@ Think about one experience you want to include on your resume.
       `,
         },
         {
-          id: "6",
+          id: "7",
           type: "text",
           html: `
 <h3 class="text-xl font-semibold mb-2">📝 Your Turn</h3>
 <p class="mb-2">Use the space below to record your brainstorm notes. This text will be referenced in the next module when you start drafting.</p>
-<textarea class="w-full border border-gray-300 p-3 rounded-md h-40 resize-y" placeholder="Write your experience notes here..."></textarea>
       `,
         },
       ],
@@ -342,7 +345,7 @@ Use the template below and your brainstorm from Section 2. Don’t worry about f
         {
           id: "5",
           type: "text",
-          html: `<h3>Paste your brainstorm here:</h3><textarea class='w-full border border-gray-300 p-3 rounded-md h-40 resize-y' placeholder='Paste or summarize your brainstorm here...'></textarea>`,
+          html: `<h3>Paste your brainstorm here:</h3>`,
         },
         {
           id: "6",
