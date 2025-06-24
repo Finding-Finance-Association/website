@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import useAuth from "@/lib/useAuth";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -166,25 +168,28 @@ export default function Header() {
                 Login
               </Link>
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Link
-                href="/register"
-                className="relative bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 overflow-hidden group"
-              >
-                <span className="relative z-10">Sign Up</span>
+            
+            
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300"
-                  initial={false}
-                />
-              </Link>
-            </motion.div>
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Link
+                    href="/register"
+                    className="relative bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 overflow-hidden group"
+                  >
+                    <span className="relative z-10">Sign Up</span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300"
+                      initial={false}
+                    />
+                  </Link>
+                </motion.div>
+              </>
+            )}
           </div>
 
         </nav>
@@ -226,6 +231,40 @@ export default function Header() {
                     )}
                   </motion.div>
                 ))}
+
+                {user ? (
+                  <motion.button
+                    onClick={() => {
+                      logout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block w-full text-red-600 hover:text-red-700 px-4 py-3 rounded-lg font-semibold text-center transition-all duration-300"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, delay: 0.4 }}
+                  >
+                    Logout
+                  </motion.button>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, delay: 0.4 }}
+                    className="pt-4 border-t border-gray-100 mx-2"
+                  >
+                    <Link
+                      href="/register"
+                      aria-label="Sign up"
+                      className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </motion.div>
+                )}
+
               </div>
             </motion.div>
           )}
