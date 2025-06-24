@@ -1,7 +1,7 @@
 "use client";
 import { getCourses } from "@/lib/mockData";
 import CourseCard from "@/components/CourseCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch } from "react-icons/fi";
@@ -14,7 +14,7 @@ export default function CoursesPage() {
     useEffect(() => {
     async function fetchCourses() {
       try {
-        const res = await fetch("/api/getCourses"); // adjust if it's under a route segment
+        const res = await fetch("/api/getCourses"); 
         const data = await res.json();
         console.log("Fetched courses", data.courses)
       } catch (error) {
