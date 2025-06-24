@@ -20,7 +20,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 flex justify-center w-full bg-white-100 backdrop-blur-lg border-b border-gray-100 shadow-sm">
+    <header className="fixed top-0 z-50 flex justify-center w-full bg-white-100 backdrop-blur-lg shadow-sm">
       <nav className="w-5/6 py-3">
         <nav className="flex flex-row items-center">
           {/* Mobile Navigation */}

@@ -8,7 +8,7 @@ import { ChevronRight, BookOpen } from "lucide-react"
 
 export default function Title() {
   return (
-    <section className="relative h-screen overflow-hidden flex items-center bg-white">
+    <section className="w-full h-screen overflow-hidden flex items-center bg-white">
       <motion.div
         className="absolute inset-0 bg-gradient-to-br from-green-700 via-green-400 to-blue-700"
         style={{
@@ -32,63 +32,73 @@ export default function Title() {
         }}
       />
 
-      <div className="relative z-10 container mx-auto px-6 flex items-center">
-        <div className="w-full lg:w-2/3 space-y-8">
-          <motion.h1
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          >
+      <div className="relative z-10 w-full flex justify-center">
+        <div className="w-5/6 flex flex-row items-center text-shadow-lg space-y-6">
+          <div className="flex flex-col space-y-6">
+            <motion.h1
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+            >
             Finding Finance Association
-          </motion.h1>
+            </motion.h1>
 
-          <motion.p
-            className="text-xl md:text-2xl lg:text-3xl text-white/90 max-w-2xl"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
-          >
-            Democratizing Finance Industry Education for Students
-          </motion.p>
+            <motion.p
+              className="text-xl lg:text-2xl text-white max-w-2xl"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+            >
+              Democratizing Finance Industry Education for Students
+            </motion.p>
+
+            <motion.div
+              className="flex flex-col sm:flex-row "
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.7 }}
+            >
+              <Link href="/courses">
+                <motion.button
+                  className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <BookOpen size={20} />
+                  Explore Courses
+                  <ChevronRight size={20} />
+                </motion.button>
+              </Link>
+            </motion.div>
+          </div>
+
+          
+
+          <div className="flex flex-col space-y-4">
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 pt-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.7 }}
+            className="hidden lg:block lg:w-1/3"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
           >
-            <Link href="/courses">
-              <motion.button
-                className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <BookOpen size={20} />
-                Explore Courses
-                <ChevronRight size={20} />
-              </motion.button>
-            </Link>
-          </motion.div>
-        </div>
-
-        <motion.div
-          className="hidden lg:block lg:w-1/3 ml-auto"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
-        >
-          <div className="w-80 h-80 bg-white/10 rounded-full backdrop-blur-sm flex items-center justify-center">
-            <div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center">
-              <Image
-                src="/images/graphic.png"
-                alt="FFA logo"
-                width={180}
-                height={180}
-              />
+            <div className="w-80 h-80 bg-white/10 rounded-full backdrop-blur-sm flex items-center justify-center">
+              <div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center">
+                <Image
+                  src="/images/ffa-logo.png"
+                  alt="FFA logo"
+                  width={180}
+                  height={180}
+                />
+              </div>
             </div>
+          </motion.div>
+
+          
           </div>
-        </motion.div>
+          
+        </div>
       </div>
     </section>
   )

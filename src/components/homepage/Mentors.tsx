@@ -36,19 +36,19 @@ const mentors = [
 
 export default function Mentors() {
   return (
-    <section id="mentors" className="bg-white py-20 px-4 md:px-8">
-      <div className="container mx-auto">
+    <section id="mentors" className="bg-white py-20 px-4 w-full flex justify-center">
+      <div className="w-5/6 flex flex-col items-center space-y-10">
         <motion.div
-          className="text-center mb-16"
+          className="text-center space-y-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
             Meet Our Mentors
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-l md:text-xl text-gray-600 max-w-2xl">
             Learn from industry professionals who are passionate about guiding
             the next generation of finance leaders.
           </p>
