@@ -4,44 +4,44 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 const testimonials = [
-    {
-      name: "Alex Thompson",
-      role: "Finance Student, NYU",
-      content:
-        "FFA's mentorship program completely transformed my understanding of finance careers. The industry insights were invaluable.",
-      rating: 5,
-    },
-    {
-      name: "Maria Garcia",
-      role: "Recent Graduate, Columbia",
-      content:
-        "The networking events and workshops provided by FFA gave me the confidence and connections I needed to land my dream job.",
-      rating: 5,
-    },
-    {
-      name: "James Wilson",
-      role: "Finance Student, Harvard",
-      content:
-        "Thanks to FFA's guidance, I discovered my passion for investment banking and secured an internship at a top firm.",
-      rating: 5,
-    },
+  {
+    name: "Alex Thompson",
+    role: "Finance Student, NYU",
+    content:
+      "FFA's mentorship program completely transformed my understanding of finance careers. The industry insights were invaluable.",
+    rating: 5,
+  },
+  {
+    name: "Maria Garcia",
+    role: "Recent Graduate, Columbia",
+    content:
+      "The networking events and workshops provided by FFA gave me the confidence and connections I needed to land my dream job.",
+    rating: 5,
+  },
+  {
+    name: "James Wilson",
+    role: "Finance Student, Harvard",
+    content:
+      "Thanks to FFA's guidance, I discovered my passion for investment banking and secured an internship at a top firm.",
+    rating: 5,
+  },
 ];
 
 export default function Testimonials() {
   return (
-    <section className="bg-gradient-to-br from-green-700 to-blue-700 py-20 px-4 md:px-8">
-      <div className="container mx-auto">
+    <section className="bg-gradient-to-br from-green-700 to-blue-700 py-20 w-full flex justify-center">
+      <div className="w-5/6 flex flex-col items-center space-y-10">
         <motion.div
-          className="text-center mb-16"
+          className="text-center space-y-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">
             What Students Say
           </h2>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-white max-w-2xl">
             Hear from students who have transformed their finance careers with
             FFA.
           </p>
@@ -68,7 +68,7 @@ export default function Testimonials() {
                 ))}
               </div>
               <p className="text-gray-700 mb-6 italic">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </p>
               <div>
                 <p className="font-semibold text-gray-900">
