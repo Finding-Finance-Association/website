@@ -4,27 +4,27 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 const testimonials = [
-    {
-      name: "Alex Thompson",
-      role: "Finance Student, NYU",
-      content:
-        "FFA's mentorship program completely transformed my understanding of finance careers. The industry insights were invaluable.",
-      rating: 5,
-    },
-    {
-      name: "Maria Garcia",
-      role: "Recent Graduate, Columbia",
-      content:
-        "The networking events and workshops provided by FFA gave me the confidence and connections I needed to land my dream job.",
-      rating: 5,
-    },
-    {
-      name: "James Wilson",
-      role: "Finance Student, Harvard",
-      content:
-        "Thanks to FFA's guidance, I discovered my passion for investment banking and secured an internship at a top firm.",
-      rating: 5,
-    },
+  {
+    name: "Alex Thompson",
+    role: "Finance Student, NYU",
+    content:
+      "FFA's mentorship program completely transformed my understanding of finance careers. The industry insights were invaluable.",
+    rating: 5,
+  },
+  {
+    name: "Maria Garcia",
+    role: "Recent Graduate, Columbia",
+    content:
+      "The networking events and workshops provided by FFA gave me the confidence and connections I needed to land my dream job.",
+    rating: 5,
+  },
+  {
+    name: "James Wilson",
+    role: "Finance Student, Harvard",
+    content:
+      "Thanks to FFA's guidance, I discovered my passion for investment banking and secured an internship at a top firm.",
+    rating: 5,
+  },
 ];
 
 export default function Testimonials() {
@@ -68,7 +68,7 @@ export default function Testimonials() {
                 ))}
               </div>
               <p className="text-gray-700 mb-6 italic">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </p>
               <div>
                 <p className="font-semibold text-gray-900">
