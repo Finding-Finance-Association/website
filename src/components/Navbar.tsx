@@ -20,14 +20,14 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 z-50 flex justify-center w-full bg-white-100 backdrop-blur-lg shadow-sm">
+    <header className="fixed top-0 z-50 flex justify-center w-full backdrop-blur-lg shadow-sm">
       <nav className="w-5/6 py-3">
         <nav className="flex flex-row items-center">
           {/* Mobile Navigation */}
-          <div className="lg:hidden flex items-center space-x-3">
+          <div className="lg:hidden flex items-center space-x-5">
             <motion.button
               onClick={toggleMobileMenu}
-              className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-300"
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300"
               whileTap={{ scale: 0.95 }}
               aria-label="Toggle mobile menu"
             >

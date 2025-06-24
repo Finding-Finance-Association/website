@@ -33,7 +33,7 @@ export default function Title() {
       />
 
       <div className="relative z-10 w-full flex justify-center">
-        <div className="w-5/6 flex flex-row items-center text-shadow-lg space-y-6">
+        <div className="w-5/6 flex flex-row items-center text-shadow-lg">
           <div className="flex flex-col space-y-6">
             <motion.h1
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight"

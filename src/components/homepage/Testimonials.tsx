@@ -41,7 +41,7 @@ export default function Testimonials() {
           <h2 className="text-3xl md:text-4xl font-bold text-white">
             What Students Say
           </h2>
-          <p className="text-l md:text-xl text-white max-w-2xl">
+          <p className="text-lg md:text-xl text-white max-w-2xl">
             Hear from students who have transformed their finance careers with
             FFA.
           </p>
