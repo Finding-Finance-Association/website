@@ -66,7 +66,7 @@ export default function CoursesAdminPage() {
         {courses.map((course) => (
           <li key={course.id} style={{ marginBottom: 10 }}>
             <strong>{course.title}</strong> - {course.category} - {course.hours} hrs
-            <Link href={`/admin/courses/${course.id}/modules`}>Manage Modules</Link>
+            <Link href={`/admin/courses/${course.id}`}>Manage Modules</Link>
             <button onClick={() => handleDelete(course.id!)} style={{ marginLeft: 5 }}>Delete</button>
           </li>
         ))}
