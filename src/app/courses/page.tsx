@@ -1,7 +1,7 @@
 "use client";
 import { getCourses } from "@/lib/mockData";
 import CourseCard from "@/components/CourseCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch } from "react-icons/fi";
@@ -10,6 +10,26 @@ export default function CoursesPage() {
   const allCourses = getCourses();
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+    useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const res = await fetch("/api/courses"); 
+        const data = await res.json();
+        console.log("Fetched courses", data.courses)
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    }
+
+    fetchCourses();
+  }, []);
+
+  // Extract unique categories from courses
+  const categories = [
+    "all",
+    ...new Set(allCourses.map((course) => course.category || "General")),
+  ];
 
   const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =

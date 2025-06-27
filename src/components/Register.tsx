@@ -2,25 +2,39 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {auth, googleAuth} from "@/lib/firebase"
+import {createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth"
+import {useRouter} from "next/navigation"
 
 export default function Register() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleGoogleRegister = () => {
-    //replace w/ actual route
-    window.location.href = "/api/auth/google";
+  const handleGoogleRegister = async() => {
+    try {
+      await signInWithPopup(auth, googleAuth)
+      router.push("/")
+    } catch (error) {
+      console.error("Google Sign-in Error", error)
+    }
   };
 
-  const handleSubmit = () => {
-    // e.preventDefault();
+  const handleSubmit = async(e: React.FormEvent ) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
-    //backend endpoint for registration here
+    try {
+      await createUserWithEmailAndPassword(auth, email, password)
+      router.push("/")
+      
+    } catch (error) {
+      console.error("Registration error:", error)
+    }
   };
 
   return (

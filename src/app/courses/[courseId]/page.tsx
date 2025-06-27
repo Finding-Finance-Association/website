@@ -6,11 +6,7 @@ import ModuleList from "@/components/ModuleList";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiChevronLeft,
-  FiMenu,
-  FiX,
-} from "react-icons/fi";
+import { FiChevronLeft, FiMenu, FiX } from "react-icons/fi";
 import CourseHeader from "@/components/course/CourseHeader";
 import CourseDescription from "@/components/course/CourseDescription";
 import SidebarEnrollCard from "@/components/course/SidebarEnrollCard";
@@ -49,12 +45,10 @@ export default function CourseDetailsPage() {
   useEffect(() => {
     if (!course) return;
     setEnrolled(user.isEnrolled(courseId));
-  }, [courseId, user, course]);
+  }, [courseId]);
 
   if (!course) {
-    return (
-      <CourseNotFound/>
-    );
+    return <CourseNotFound />;
   }
 
   const handleGoBack = () => {
@@ -73,7 +67,6 @@ export default function CourseDetailsPage() {
     });
   };
 
-
   const progressPercentage = Math.round(
     (completedModules.size / course.modules.length) * 100
   );
@@ -81,97 +74,94 @@ export default function CourseDetailsPage() {
   // If enrolled, show learning interface
   if (enrolled) {
     const currentModule = course.modules[activeModule];
-
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* Top Header */}
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm"
-        >
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              {sidebarOpen ? (
-                <FiX className="w-5 h-5" />
-              ) : (
-                <FiMenu className="w-5 h-5" />
-              )}
-            </button>
-            <div>
-              <h1 className="font-semibold text-gray-900 text-lg truncate max-w-md">
-                {course.title}
-              </h1>
-              <p className="text-sm text-gray-600">
-                Module {activeModule + 1} of {course.modules.length} •{" "}
-              </p>
+      <>
+        <Header />
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+          {/* Top Header */}
+          <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                {sidebarOpen ? (
+                  <FiX className="w-5 h-5" />
+                ) : (
+                  <FiMenu className="w-5 h-5" />
+                )}
+              </button>
+              <div>
+                <h1 className="font-semibold text-gray-900 text-lg truncate max-w-md">
+                  {course.title}
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Module {activeModule + 1} of {course.modules.length}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Progress Indicator */}
+              <div className="hidden md:flex items-center gap-3">
+                <span className="text-sm text-gray-600">
+                  {progressPercentage}%
+                </span>
+                <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercentage}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleGoBack}
+                className="bg-gray-100 text-gray-700 hover:text-emerald-600 hover:bg-gray-200 transition-all px-4 py-2 rounded-lg font-medium"
+              >
+                Exit
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Progress Indicator */}
-            <div className="hidden md:flex items-center gap-3">
-              <span className="text-sm text-gray-600">
-                {progressPercentage}%
-              </span>
-              <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+          <div className="flex flex-1 overflow-hidden">
+            {/* Left Sidebar - Course Navigation */}
+            <ModuleNavigator
+              modules={course.modules}
+              activeModule={activeModule}
+              completedModules={completedModules}
+              activeTab={activeTab}
+              sidebarOpen={sidebarOpen}
+              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+              onSelectModule={(i) => {
+                setActiveModule(i);
+              }}
+              onSetTab={setActiveTab}
+              onToggleComplete={toggleModuleCompletion}
+            />
+
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 p-6 overflow-y-auto">
+                <ModuleContent
+                  currentModule={currentModule}
+                  activeModule={activeModule}
+                  courseLength={course.modules.length}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  setActiveModule={setActiveModule}
+                  toggleModuleCompletion={toggleModuleCompletion}
+                  quizData={course.quizzes}
+                  isEnrolled={enrolled}
                 />
               </div>
             </div>
-            <button
-              onClick={handleGoBack}
-              className="bg-gray-100 text-gray-700 hover:text-emerald-600 hover:bg-gray-200 transition-all px-4 py-2 rounded-lg font-medium"
-            >
-              Exit Course
-            </button>
-          </div>
-        </motion.div>
-
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left Sidebar - Course Navigation */}
-          <ModuleNavigator
-            modules={course.modules}
-            activeModule={activeModule}
-            completedModules={completedModules}
-            activeTab={activeTab}
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            onSelectModule={(i) => {
-              setActiveModule(i);
-            }}
-            onSetTab={setActiveTab}
-            onToggleComplete={toggleModuleCompletion}
-          />
-
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 p-6 overflow-y-auto">
-              <ModuleContent
-                currentModule={currentModule}
-                activeModule={activeModule}
-                courseLength={course.modules.length}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                setActiveModule={setActiveModule}
-                toggleModuleCompletion={toggleModuleCompletion}
-                quizData={course.quizzes}
-                isEnrolled={enrolled}
-              />
-            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
-
   // Original course details view for non-enrolled users
   return (
     <>
