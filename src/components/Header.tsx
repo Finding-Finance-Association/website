@@ -4,6 +4,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import useAuth from "@/lib/useAuth";
+import { usePathname } from "next/navigation";
+
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,8 +16,12 @@ export default function Header() {
   };
 
   const [isScrolledPastTitle, setIsScrolledPastTitle] = useState(false);
+  const pathname = usePathname();
+  const isLandingPage = pathname === "/";
 
   useEffect(() => {
+    if (!isLandingPage) return;
+    
     const titleSection = document.getElementById("title");
     if (!titleSection) return;
 
@@ -71,7 +77,7 @@ export default function Header() {
               </motion.div>
               <span
                 className={`text-xl font-bold text-gray-900 hidden sm:block group-hover:text-green-700 transition-all duration-500 ease-in-out
-    ${isScrolledPastTitle ? "opacity-100 visible" : "opacity-0 invisible"}
+    ${ !isLandingPage || isScrolledPastTitle ? "opacity-100 visible" : "opacity-0 invisible"}
   `}
               >
                 Finding Finance Association
