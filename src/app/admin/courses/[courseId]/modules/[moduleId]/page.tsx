@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/firebase";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { console } from "inspector";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -28,6 +29,10 @@ export default function ModuleDetailPage() {
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
   const [editMode, setEditMode] = useState(false);
   const [editForm, setEditForm] = useState<Module | null>(null);
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+  const [editContentForm, setEditContentForm] = useState<any>({});
+  const [editType, setEditType] = useState<string>("");
+  const [editOrder, setEditOrder] = useState<number>(1);
 
   useEffect(() => {
     const fetchModuleDetails = async () => {
@@ -75,6 +80,40 @@ export default function ModuleDetailPage() {
     await deleteDoc(blockRef);
     setContentBlocks((prev) => prev.filter((block) => block.id !== blockId));
   };
+
+  const handleEditClick = async (block: ContentBlock) => {
+    setEditingBlockId(block.id!);
+    setEditType(block.type);
+    setEditOrder(block.order)
+    setEditContentForm(block.content)
+  }
+
+  const handleEditSave = async () => {
+    if (!courseId || !moduleId || !editingBlockId) return;
+
+    const updatedBlock = {
+      type: editType,
+      content: editContentForm,
+      order: editOrder
+    }
+    const blockRef = doc(
+    db,
+    "courses_coll",
+    courseId as string,
+    "modules",
+    moduleId as string,
+    "contentBlocks",
+    editingBlockId
+  );
+
+  await setDoc(blockRef, updatedBlock);
+  setContentBlocks((prev) =>
+    prev.map((b) => (b.id === editingBlockId ? { ...updatedBlock, id: editingBlockId } : b))
+  );
+  setEditingBlockId(null);
+  setEditContentForm({});
+
+  }
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: "900px", margin: "auto" }}>
@@ -171,17 +210,87 @@ export default function ModuleDetailPage() {
               justifyContent: "space-between",
               alignItems: "center",
             }}
+            
           >
-            <div>
-              <strong>[{block.order}] {block.type}</strong>
-              <p style={{ marginTop: "0.5rem", fontFamily: "monospace", fontSize: "0.9rem" }}>{JSON.stringify(block.content)}</p>
-            </div>
-            <button
-              onClick={() => handleDeleteBlock(block.id!)}
-              style={{ padding: "0.4rem 0.75rem", backgroundColor: "#dc3545", color: "#fff", border: "none", borderRadius: "4px" }}
-            >
-              Delete
-            </button>
+            {editingBlockId === block.id ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <select value={editType} onChange={(e) => setEditType(e.target.value)}>
+          <option value="markdown">Markdown</option>
+          <option value="video">Video</option>
+          <option value="quote">Quote</option>
+          <option value="list">List</option>
+          <option value="text">Text</option>
+        </select>
+
+        {editType === "markdown" && (
+          <textarea name="markdown" value={editContentForm.markdown || ""} onChange={(e) => setEditContentForm({ markdown: e.target.value })} />
+        )}
+        {editType === "video" && (
+          <>
+            <input
+              name="videoTitle"
+              placeholder="Video Title"
+              value={editContentForm.title || ""}
+              onChange={(e) => setEditContentForm({ ...editContentForm, title: e.target.value })}
+            />
+            <input
+              name="videoUrl"
+              placeholder="URL"
+              value={editContentForm.url || ""}
+              onChange={(e) => setEditContentForm({ ...editContentForm, url: e.target.value })}
+            />
+          </>
+        )}
+        {editType === "list" && (
+          <textarea
+            name="items"
+            placeholder="Comma separated"
+            value={(editContentForm.items || []).join(", ")}
+            onChange={(e) =>
+              setEditContentForm({ items: e.target.value.split(",").map((item) => item.trim()) })
+            }
+          />
+        )}
+        {editType === "quote" && (
+          <input
+            name="quote"
+            value={editContentForm.text || ""}
+            onChange={(e) => setEditContentForm({ text: e.target.value })}
+          />
+        )}
+
+        <input type="number" value={editOrder} onChange={(e) => setEditOrder(Number(e.target.value))} />
+
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button onClick={handleEditSave} style={{ backgroundColor: "#28a745", color: "#fff" }}>Save</button>
+          <button onClick={() => setEditingBlockId(null)} style={{ backgroundColor: "#6c757d", color: "#fff" }}>Cancel</button>
+        </div>
+      </div>
+            ) :
+            
+            (
+              <>
+              <div>
+          <strong>[{block.order}] {block.type}</strong>
+          <p style={{ fontFamily: "monospace", fontSize: "0.9rem" }}>{JSON.stringify(block.content)}</p>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button
+            onClick={() => handleEditClick(block)}
+            style={{ padding: "0.4rem 0.75rem", backgroundColor: "#ffc107", color: "#000", border: "none", borderRadius: "4px" }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDeleteBlock(block.id!)}
+            style={{ padding: "0.4rem 0.75rem", backgroundColor: "#dc3545", color: "#fff", border: "none", borderRadius: "4px" }}
+          >
+            Delete
+          </button>
+        </div>
+              </>
+            )}
+            
           </li>
         ))}
       </ul>
