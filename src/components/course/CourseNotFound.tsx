@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { FiBookOpen, FiChevronLeft } from "react-icons/fi";
-import Header from "../Header";
+import Header from "@/components/Header";
 
 export default function CourseNotFound() {
   return (
