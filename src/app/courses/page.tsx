@@ -14,7 +14,7 @@ export default function CoursesPage() {
     useEffect(() => {
     async function fetchCourses() {
       try {
-        const res = await fetch("/api/getCourses"); 
+        const res = await fetch("/api/courses"); 
         const data = await res.json();
         console.log("Fetched courses", data.courses)
       } catch (error) {
