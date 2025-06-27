@@ -4,6 +4,7 @@ import CourseCard from "@/components/CourseCard";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
+import { FiDollarSign } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
 
 export default function CoursesPage() {
@@ -11,25 +12,19 @@ export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-    useEffect(() => {
-    async function fetchCourses() {
-      try {
-        const res = await fetch("/api/courses"); 
-        const data = await res.json();
-        console.log("Fetched courses", data.courses)
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchCourses() {
+  //     try {
+  //       const res = await fetch("/api/courses");
+  //       const data = await res.json();
+  //       console.log("Fetched courses", data.courses);
+  //     } catch (error) {
+  //       console.error("Error fetching courses:", error);
+  //     }
+  //   }
 
-    fetchCourses();
-  }, []);
-
-  // Extract unique categories from courses
-  const categories = [
-    "all",
-    ...new Set(allCourses.map((course) => course.category || "General")),
-  ];
+  //   fetchCourses();
+  // }, []);
 
   const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
@@ -70,16 +65,9 @@ export default function CoursesPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative overflow-hidden"
+          className="relative overflow-hidden mt-4 sm:mt-6 md:mt-8 lg:mt-12 xl:mt-16"
         >
-          {/* Background Elements */}
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-green-500/10" />
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-20 left-1/4 w-64 h-64 bg-emerald-200/20 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
-          </div>
-
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
             <div className="text-center">
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
@@ -98,7 +86,7 @@ export default function CoursesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+                className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
               >
                 Transform your relationship with money through expert-designed
                 courses that deliver real-world results and lasting financial
@@ -109,7 +97,7 @@ export default function CoursesPage() {
         </motion.section>
 
         {/* Search and Filter Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -194,8 +182,8 @@ export default function CoursesPage() {
                     No courses found
                   </h3>
                   <p className="text-gray-600 mb-6 max-w-md">
-                    We couldn&apos;t find any courses matching your search criteria.
-                    Try adjusting your filters or search terms.
+                    We couldn&apos;t find any courses matching your search
+                    criteria. Try adjusting your filters or search terms.
                   </p>
                   <motion.button
                     onClick={() => {
