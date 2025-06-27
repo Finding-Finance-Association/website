@@ -5,7 +5,7 @@ import { useUser } from "@/lib/useUser";
 import ModuleList from "@/components/ModuleList";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FiChevronLeft, FiMenu, FiX } from "react-icons/fi";
 import CourseHeader from "@/components/course/CourseHeader";
 import CourseDescription from "@/components/course/CourseDescription";
