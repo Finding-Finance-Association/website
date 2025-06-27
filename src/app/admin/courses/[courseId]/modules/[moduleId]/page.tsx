@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/firebase";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import { console } from "inspector";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
