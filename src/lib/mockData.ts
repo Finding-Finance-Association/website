@@ -259,8 +259,8 @@ Brainstorming is essential, even if you’ve already written resumes before. Spe
         },
         {
           id: "4",
-          type:'markdown',
-          markdown: `**Helpful tips and questions for brainstorming:**`
+          type: "markdown",
+          markdown: `**Helpful tips and questions for brainstorming:**`,
         },
         {
           id: "5",
@@ -385,6 +385,155 @@ Merge similar points and tighten language.
           id: "9",
           type: "quiz",
           quizId: "resume-polishing-quiz",
+        },
+      ],
+    },
+    {
+      id: "4",
+      title: "What Makes a Resume Great (Not Just Good)",
+      outcome:
+        "Learn how to enhance your resume with impact-driven bullet points and real results.",
+      contentType: "Article + Activity",
+      contentBlocks: [
+        {
+          id: "1",
+          type: "markdown",
+          markdown: `### From Good to Great
+
+So you’ve got your experiences down, your format looks clean, and you’re hitting the basics. Now it’s time to turn your resume from *fine* to *fantastic*.
+
+Here are 5 powerful upgrades that can immediately elevate your resume — and make recruiters stop scrolling.`,
+        },
+        {
+          id: "2",
+          type: "markdown",
+          markdown: `### 1. Quantify Your Impact
+
+Numbers give your resume credibility and help readers understand your scale of responsibility.
+
+✅ Good:  
+Led fundraising event for club
+
+✅✅ Great:  
+Organized fundraising gala that raised $2,500, exceeding target by 40%
+
+🪄 Use numbers to show how many, how much, how often, or how fast.`,
+        },
+        {
+          id: "3",
+          type: "markdown",
+          markdown: `### 2. Start Every Bullet With a Strong Action Verb
+
+Skip “Responsible for…” or “Helped with…”. Use bold, action verbs that reflect what you actually did.
+
+💥 Examples: Analyzed, Built, Implemented, Coordinated, Negotiated, Automated, Presented
+
+✅ Good:  
+Helped with social media posts
+
+✅✅ Great:  
+Created and scheduled 20+ weekly social posts, boosting engagement by 30%`,
+        },
+        {
+          id: "4",
+          type: "markdown",
+          markdown: `### 3. Focus on Results, Not Just Tasks
+
+Don’t just say what you did — say *why* it mattered.
+
+✅ Good:  
+Updated Excel database
+
+✅✅ Great:  
+Cleaned and restructured Excel database of 3,000+ entries, improving team workflow speed by 20%
+
+🪄 Show how your work made something better, faster, cheaper, or more efficient.`,
+        },
+        {
+          id: "5",
+          type: "markdown",
+          markdown: `### 4. Tailor to the Job or Industry
+
+One-size-fits-all resumes rarely stand out. Adjust your bullet points and language based on what the job description emphasizes.
+
+💥 Finance: Use keywords like “financial modeling,” “valuation,” “market research”  
+💥 Marketing: Highlight “engagement,” “strategy,” “audience,” “campaign performance”
+
+🪄 This tells the employer: I get what matters to you.`,
+        },
+        {
+          id: "6",
+          type: "markdown",
+          markdown: `### 5. Cut the Fluff
+
+You only have one page — every word has to earn its place. Cut vague adjectives like “passionate,” “hard-working,” or “team player” unless you can show those qualities through results.
+
+❌ Instead of saying: “Dedicated and enthusiastic leader”
+
+✅ Show it through:  
+“Led 5-person project team to complete rollout 2 weeks ahead of schedule”`,
+        },
+        {
+          id: "7",
+          type: "quote",
+          text: `"A great resume tells a story of action and impact."`,
+        },
+      ]
+    },
+    {
+      id: "5",
+      title: "The Purpose of a Cover Letter",
+      outcome:
+        "Understand what a cover letter is, why it matters, and how to make yours effective.",
+      contentType: "Video + Article",
+      contentBlocks: [
+        {
+          id: "1",
+          type: "video",
+          url: "https://wustl.box.com/s/nntqoav501jo7a0r5mwl8c4ifspvxwf0",
+          title: "What is a Cover Letter and Why It Matters",
+        },
+        {
+          id: "2",
+          type: "markdown",
+          markdown: `### What is a Cover Letter?
+
+A cover letter is a one-page professional introduction that connects your resume to the job you're applying for. It tells your story - who you are, why you’re applying, and how your experience connects to the role. Think of it as your personal pitch.`,
+        },
+        {
+          id: "3",
+          type: "list",
+          items: [
+            "It introduces you beyond the bullet points of your resume.",
+            "It highlights *why* your experience matters for *this* job.",
+            "It shows you took time to tailor your application.",
+          ],
+        },
+        {
+          id: "4",
+          type: "markdown",
+          markdown: `### Why Cover Letters Still Matter
+
+Even if not all hiring managers read them, a strong cover letter:
+- Demonstrates interest and effort
+- Adds context and clarity to your resume
+- Gives you space to tell your story
+- Lets your personality and voice shine through`,
+        },
+        {
+          id: "5",
+          type: "quote",
+          text: `"Your cover letter is your handshake before the interview."`,
+        },
+        {
+          id: "6",
+          type: "markdown",
+          markdown: `### Tips for Writing a Great Cover Letter
+
+- **Be specific**: Mention a project or value from the company that excites you.
+- **Tell a story**: Share a real example that connects your passion or skills to the job.
+- **Keep it short**: Aim for three concise paragraphs.
+- **Add value**: Don’t just restate your resume — offer something new.`,
         },
       ],
     },
