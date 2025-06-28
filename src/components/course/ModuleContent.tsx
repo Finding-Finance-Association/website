@@ -84,7 +84,7 @@ export default function ModuleContent({
         />
       ) : (
         <>
-          {/* Content Header (unchanged) */}
+          {/* Content Header */}
           <div className="mb-6">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
               <span>Module {activeModule + 1}</span>
@@ -333,7 +333,7 @@ export default function ModuleContent({
               }
             })}
 
-            {/* Learning Outcome Section (unchanged) */}
+            {/* Learning Outcome Section */}
             {currentModule?.outcome && (
               <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
                 <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
@@ -345,7 +345,7 @@ export default function ModuleContent({
             )}
           </div>
 
-          {/* Navigation Buttons (unchanged) */}
+          {/* Navigation Buttons */}
           <div className="flex justify-between items-center mt-6">
             <button
               onClick={() => {

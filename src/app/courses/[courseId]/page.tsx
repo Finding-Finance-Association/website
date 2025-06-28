@@ -24,10 +24,7 @@ export default function CourseDetailsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeModule, setActiveModule] = useState(0);
   const [activeTab, setActiveTab] = useState<"lesson" | "quiz">("lesson");
-
-  const [completedModules, setCompletedModules] = useState<Set<number>>(
-    new Set([0, 1])
-  );
+  const [completedModules, setCompletedModules] = useState(new Set<number>());
 
   const [userInput, setUserInput] = useState<Record<string, string>>({});
 
