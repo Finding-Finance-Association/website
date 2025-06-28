@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 import Title from "@/components/homepage/Title";
@@ -10,7 +10,7 @@ import Newsletter from "@/components/homepage/Newsletter";
 export default function Home() {
   return (
     <>
-      <Navbar/>
+      <Header/>
       <Title/>
       <About/>
       <Mentors/>
