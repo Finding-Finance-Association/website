@@ -92,23 +92,6 @@ npm run dev
 
 - Open your browser and navigate to: `http://localhost:3000`
 
-## 📁 Project Structure
-
-```
-finding-finance-association/
-├── src/
-│   ├── app/                 # Next.js app directory
-│   ├── components/          # Reusable React components
-│   ├── context/            # React context providers
-│   ├── lib/                # Utility functions and configurations
-│   ├── services/           # API services and external integrations
-│   └── styles/             # Global styles and CSS modules
-├── public/                 # Static assets
-├── docker-compose.yml      # Docker composition configuration
-├── Dockerfile             # Docker image configuration
-├── package.json           # Project dependencies and scripts
-└── README.md              # This file
-```
 
 ## 🛠️ Available Scripts
 
