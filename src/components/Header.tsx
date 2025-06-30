@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import useAuth from "@/lib/useAuth";
 import { usePathname } from "next/navigation";
-
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -21,7 +22,7 @@ export default function Header() {
 
   useEffect(() => {
     if (!isLandingPage) return;
-    
+
     const titleSection = document.getElementById("title");
     if (!titleSection) return;
 
@@ -48,6 +49,9 @@ export default function Header() {
     { href: "/courses", label: "Courses", highlighted: true },
     { href: "/newsletters", label: "Newsletters" },
   ];
+
+  if (loading) return null;
+  console.log(user);
 
   return (
     <header className="fixed top-0 z-50 flex justify-center w-full backdrop-blur-lg shadow-sm">
@@ -77,8 +81,11 @@ export default function Header() {
               </motion.div>
               <span
                 className={`text-xl font-bold text-gray-900 hidden sm:block group-hover:text-green-700 transition-all duration-500 ease-in-out
-    ${ !isLandingPage || isScrolledPastTitle ? "opacity-100 visible" : "opacity-0 invisible"}
-  `}
+                  ${
+                    !isLandingPage || isScrolledPastTitle
+                      ? "opacity-100 visible"
+                      : "opacity-0 invisible"
+                  }`}
               >
                 Finding Finance Association
               </span>
@@ -122,37 +129,58 @@ export default function Header() {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-3">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <Link
-                href="/login"
-                className="text-gray-700 hover:text-green-600 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-gray-50"
+            {user ? (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
               >
-                Login
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Link
-                href="/register"
-                className="relative bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 overflow-hidden group"
-              >
-                <span className="relative z-10">Sign Up</span>
+                <div className="flex items-center space-x-4">
+                  <span className="text-gray-700 font-medium">
+                    {user.username}
+                  </span>
+                  <button
+                    onClick={logout}
+                    className="text-gray-700 hover:text-green-600 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:bg-gray-50"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <>
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300"
-                  initial={false}
-                />
-              </Link>
-            </motion.div>
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                >
+                  <Link
+                    href="/login"
+                    className="text-gray-700 hover:text-green-600 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-gray-50"
+                  >
+                    Login
+                  </Link>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Link
+                    href="/register"
+                    className="relative bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 overflow-hidden group"
+                  >
+                    <span className="relative z-10">Sign Up</span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300"
+                      initial={false}
+                    />
+                  </Link>
+                </motion.div>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
