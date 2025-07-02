@@ -12,20 +12,23 @@ export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // useEffect(() => {
-  //   async function fetchCourses() {
-  //     try {
-  //       const res = await fetch("/api/courses");
-  //       const data = await res.json();
-  //       console.log("Fetched courses", data.courses);
-  //     } catch (error) {
-  //       console.error("Error fetching courses:", error);
-  //     }
-  //   }
+  useEffect(()=>{
+    const fetchCourses = async () => {
+      try {
+        const res = await fetch('/api/courses');
 
-  //   fetchCourses();
-  // }, []);
-
+        if(!res.ok){
+          const errorData = await res.json();
+          throw new Error(errorData.err || 'Server Error')
+        }
+        const data = await res.json();
+        console.log(data)
+      } catch (error: any) {
+        console.log(error.message || "Unexpected Error")
+      }
+    };
+    fetchCourses();
+  },[]);
   const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(search.toLowerCase()) ||

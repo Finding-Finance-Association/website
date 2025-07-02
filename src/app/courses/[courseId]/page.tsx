@@ -28,6 +28,20 @@ export default function CourseDetailsPage() {
 
   const [userInput, setUserInput] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    const fetchModules = async() => {
+      const res = await fetch(`/api/courses/${courseId}`)
+      if(!res.ok){
+        const errorData = await res.json()
+        throw new Error(errorData.err || 'Server Error')
+      }
+
+      const data = await res.json();
+      console.log(data)
+    };
+    fetchModules();
+  }, [])
+
   // Function to handle the textarea input change (need to work on this)
   const handleInputChange = (
     blockId: string,
@@ -38,6 +52,8 @@ export default function CourseDetailsPage() {
       [blockId]: e.target.value,
     }));
   };
+
+
 
   useEffect(() => {
     if (!course) return;
