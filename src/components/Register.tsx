@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {auth, googleAuth} from "@/lib/firebase"
-import {createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth"
-import {useRouter} from "next/navigation"
+import { auth, googleAuth, db } from "@/lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Register() {
   const router = useRouter();
@@ -13,32 +18,68 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleGoogleRegister = async() => {
+  // Handle Google Register
+  const handleGoogleRegister = async () => {
     try {
-      await signInWithPopup(auth, googleAuth)
-      router.push("/")
-    } catch (error) {
-      console.error("Google Sign-in Error", error)
+      const result = await signInWithPopup(auth, googleAuth);
+      const user = result.user;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        toast.success("Already registered. Redirecting...");
+        router.push("/");
+      } else {
+        const usernameFromEmail = user.email?.split("@")[0] || "user";
+        await setDoc(userDocRef, {
+          username: usernameFromEmail,
+          email: user.email,
+          createdAt: new Date(),
+        });
+
+        toast.success("Registration successful with Google!");
+        router.push("/");
+      }
+    } catch (error: any) {
+      toast.error(`Google Sign-in failed: ${error.code.split("/")[1].replace(/-/g, " ")}`);
     }
   };
 
-  const handleSubmit = async(e: React.FormEvent ) => {
+  // Handle Email/Password Register
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password)
-      router.push("/")
-      
-    } catch (error) {
-      console.error("Registration error:", error)
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        username,
+        email,
+        createdAt: new Date(),
+      });
+
+      toast.success("Account created successfully!");
+      router.push("/");
+    } catch (error: any) {
+      toast.error(`Registration failed: ${error.code.split("/")[1].replace(/-/g, " ")}`);
     }
   };
 
   return (
-    <div className="max-w-md w-full bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="max-w-md mx-auto w-full bg-white shadow-md rounded-lg overflow-hidden mt-12 animate-fade-in">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="px-6 py-8">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
           Create an Account
@@ -57,20 +98,16 @@ export default function Register() {
           Sign up with Google
         </button>
 
-        <div className="relative flex items-center mb-3 mt-2">
+        <div className="relative flex items-center my-4">
           <span className="flex-grow border-t border-gray-300"></span>
           <span className="mx-4 text-gray-500">or</span>
           <span className="flex-grow border-t border-gray-300"></span>
         </div>
 
-        {/* Username / Email & Password Registration */}
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                 Username
               </label>
               <input
@@ -84,10 +121,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
               <input
@@ -101,10 +135,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
@@ -118,10 +149,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
               </label>
               <input
