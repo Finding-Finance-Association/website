@@ -51,7 +51,6 @@ export default function Header() {
   ];
 
   if (loading) return null;
-  console.log(user);
 
   return (
     <header className="fixed top-0 z-50 flex justify-center w-full backdrop-blur-lg shadow-sm">
