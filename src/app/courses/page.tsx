@@ -7,28 +7,48 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiDollarSign } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
 
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  category?: string;
+  hours?: number;
+};
+
 export default function CoursesPage() {
-  const allCourses = getCourses();
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showCourses, setShowCourses] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowCourses(true);
+    }, 600);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch('/api/courses');
+        const res = await fetch("/api/courses");
 
-        if(!res.ok){
+        if (!res.ok) {
           const errorData = await res.json();
-          throw new Error(errorData.err || 'Server Error')
+          throw new Error(errorData.err || "Server Error");
         }
         const data = await res.json();
-        console.log(data)
+        setAllCourses(data);
+        console.log("courses data : ", data);
       } catch (error: any) {
-        console.log(error.message || "Unexpected Error")
+        console.log(error.message || "Unexpected Error");
       }
     };
     fetchCourses();
-  },[]);
+  }, []);
+
   const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -54,7 +74,7 @@ export default function CoursesPage() {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
@@ -156,53 +176,55 @@ export default function CoursesPage() {
         </section>
 
         {/* Courses Grid */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${search}`}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            >
-              {filteredCourses.length > 0 ? (
-                filteredCourses.map((course) => (
-                  <motion.div key={course.id} variants={itemVariants} layout>
-                    <CourseCard course={course} />
-                  </motion.div>
-                ))
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="col-span-full flex flex-col items-center justify-center py-16 text-center"
-                >
-                  <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                    <FiSearch className="w-12 h-12 text-gray-400" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                    No courses found
-                  </h3>
-                  <p className="text-gray-600 mb-6 max-w-md">
-                    We couldn&apos;t find any courses matching your search
-                    criteria. Try adjusting your filters or search terms.
-                  </p>
-                  <motion.button
-                    onClick={() => {
-                      setSearch("");
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-6 py-3 bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600 transition-colors duration-300"
+        {showCourses && (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${search}`}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              >
+                {filteredCourses.length > 0 ? (
+                  filteredCourses.map((course) => (
+                    <motion.div key={course.id} variants={itemVariants} layout>
+                      <CourseCard course={course} />
+                    </motion.div>
+                  ))
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="col-span-full flex flex-col items-center justify-center py-16 text-center"
                   >
-                    Clear Filters
-                  </motion.button>
-                </motion.div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </section>
+                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                      <FiSearch className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                      No courses found
+                    </h3>
+                    <p className="text-gray-600 mb-6 max-w-md">
+                      We couldn&apos;t find any courses matching your search
+                      criteria. Try adjusting your filters or search terms.
+                    </p>
+                    <motion.button
+                      onClick={() => {
+                        setSearch("");
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-3 bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600 transition-colors duration-300"
+                    >
+                      Clear Filters
+                    </motion.button>
+                  </motion.div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </section>
+        )}
       </main>
     </>
   );
