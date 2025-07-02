@@ -15,10 +15,54 @@ import ModuleNavigator from "@/components/course/ModuleNavigator";
 import ModuleContent from "@/components/course/ModuleContent";
 import CourseNotFound from "@/components/course/CourseNotFound";
 
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  category?: string;
+  hours?: number;
+}
+
+export interface ContentBlock {
+  id: string;
+  type: "text" | "markdown" | "video" | "list" | "quiz" | "quote";
+  html?: string;
+  markdown?: string;
+  url?: string;
+  title?: string;
+  src?: string;
+  alt?: string;
+  items?: string[];
+  quizId?: string;
+  text?: string;
+}
+
+export interface Module {
+  id: string;
+  title: string;
+  outcome?: string;
+  contentType?: string;
+  contentBlocks: ContentBlock[];
+}
+
+export interface Question {
+  id: string;
+  type: "mcq" | "text";
+  question: string;
+  options?: string[];
+  correctAnswer: string;
+}
+
+export interface DetailedCourse extends Course {
+  modules: Module[];
+  quizzes: Question[];
+}
+
 export default function CourseDetailsPage() {
   const { courseId } = useParams<{ courseId: string }>();
   const router = useRouter();
-  const course = getCourseById(courseId);
+  const [course, setCourse] = useState<DetailedCourse | null>(null);
   const user = useUser();
   const [enrolled, setEnrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -37,6 +81,7 @@ export default function CourseDetailsPage() {
       }
 
       const data = await res.json();
+      setCourse(data);
       console.log(data)
     };
     fetchModules();
