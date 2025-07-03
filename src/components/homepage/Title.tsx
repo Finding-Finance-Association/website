@@ -33,7 +33,7 @@ export default function Title() {
       />
 
       <div className="relative z-10 w-full flex justify-center">
-        <div className="w-5/6 flex flex-row items-center text-shadow-lg">
+        <div className="w-5/6 flex flex-row items-center justify-between text-shadow-lg">
           <div className="flex flex-col space-y-6">
             <motion.h1
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight"
@@ -73,29 +73,24 @@ export default function Title() {
             </motion.div>
           </div>
 
-          
-
           <div className="flex flex-col space-y-4">
-
-          <motion.div
-            className="hidden lg:block lg:w-1/3"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
-          >
-            <div className="w-80 h-80 bg-white/10 rounded-full backdrop-blur-sm flex items-center justify-center">
-              <div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center">
-                <Image
-                  src="/images/ffa-logo.png"
-                  alt="FFA logo"
-                  width={180}
-                  height={180}
-                />
+            <motion.div
+              className="hidden lg:block lg:w-1/3"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
+            >
+              <div className="w-80 h-80 bg-white/10 rounded-full backdrop-blur-sm flex items-center justify-center">
+                <div className="w-64 h-64 bg-white/20 rounded-full flex items-center justify-center">
+                  <Image
+                    src="/images/ffa-logo.png"
+                    alt="FFA logo"
+                    width={180}
+                    height={180}
+                  />
+                </div>
               </div>
-            </div>
-          </motion.div>
-
-          
+            </motion.div>
           </div>
           
         </div>
