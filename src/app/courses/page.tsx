@@ -4,8 +4,9 @@ import CourseCard from "@/components/CourseCard";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiDollarSign } from "react-icons/fi";
 import { FiSearch } from "react-icons/fi";
+import Footer from "@/components/Footer";
+import TitleCard from "@/components/TitleCard";
 
 type Course = {
   id: string;
@@ -83,41 +84,11 @@ export default function CoursesPage() {
     <>
       <Header />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-        {/* Hero Section */}
-        <motion.section
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative overflow-hidden mt-4 sm:mt-6 md:mt-8 lg:mt-12 xl:mt-16"
-        >
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-            <div className="text-center">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6 leading-tight"
-              >
-                Master Your
-                <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                  {" "}
-                  Financial Future
-                </span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
-              >
-                Transform your relationship with money through expert-designed
-                courses that deliver real-world results and lasting financial
-                confidence.
-              </motion.p>
-            </div>
-          </div>
-        </motion.section>
+        <TitleCard
+          title1="Master Your"
+          title2="Financial Future"
+          subtext="Transform your relationship with money through expert-designed courses that deliver real-world results and lasting financial confidence."
+        />
 
         {/* Search and Filter Section */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
@@ -225,6 +196,8 @@ export default function CoursesPage() {
             </AnimatePresence>
           </section>
         )}
+
+        <Footer/>
       </main>
     </>
   );
