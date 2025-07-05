@@ -1,20 +1,27 @@
-import { NextResponse } from 'next/server';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { NextResponse } from "next/server";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-// Force Node.js runtime to avoid Edge Runtime limitations
-export const runtime = 'nodejs';
+// Force Node.js runtime
+export const runtime = "nodejs";
 
-export async function GET(
-  request: Request,
-  context: any // Accept as any to avoid TS errors temporarily
-) {
-  // Await the params object before destructuring
-  const params = await context.params;
-  const courseId = params.courseId;
+export async function GET(request: Request, context: { params: { courseId: string } }) {
+  const { courseId } = await context.params;
 
   try {
-    const modulesRef = collection(db, 'courses_coll', courseId, 'modules');
+    const courseRef = doc(db, "courses_coll", courseId);
+    const courseSnap = await getDoc(courseRef);
+
+    if (!courseSnap.exists()) {
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
+    }
+
+    const courseData = {
+      id: courseSnap.id,
+      ...courseSnap.data(),
+    };
+
+    const modulesRef = collection(db, "courses_coll", courseId, "modules");
     const modulesSnapshot = await getDocs(modulesRef);
 
     const modules = await Promise.all(
@@ -26,11 +33,11 @@ export async function GET(
 
         const contentBlockRef = collection(
           db,
-          'courses_coll',
+          "courses_coll",
           courseId,
-          'modules',
+          "modules",
           moduleDoc.id,
-          'contentBlocks'
+          "contentBlocks"
         );
         const contentBlocksSnapshot = await getDocs(contentBlockRef);
 
@@ -46,9 +53,15 @@ export async function GET(
       })
     );
 
-    return NextResponse.json(modules);
-  } catch (error) {
-    console.error('Error fetching Modules:', error);
-    return NextResponse.json({ error: 'Failed to fetch modules' }, { status: 500 });
+    return NextResponse.json({
+      ...courseData,
+      modules,
+    });
+  } catch (error: any) {
+    console.error("❌ Error fetching Modules:", error.message);
+    return NextResponse.json(
+      { error: "Failed to fetch course and modules" },
+      { status: 500 }
+    );
   }
 }
