@@ -69,23 +69,31 @@ export default function CourseDetailsPage() {
   const [activeModule, setActiveModule] = useState(0);
   const [activeTab, setActiveTab] = useState<"lesson" | "quiz">("lesson");
   const [completedModules, setCompletedModules] = useState(new Set<number>());
+  const [length, setLength] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const [userInput, setUserInput] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const fetchModules = async() => {
-      const res = await fetch(`/api/courses/${courseId}`)
-      if(!res.ok){
-        const errorData = await res.json()
-        throw new Error(errorData.err || 'Server Error')
-      }
+    const fetchModules = async () => {
+      try {
+        const res = await fetch(`/api/courses/${courseId}`);
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.err || "Server Error");
+        }
 
-      const data = await res.json();
-      setCourse(data);
-      console.log(data)
+        const data = await res.json();
+        setCourse(data);
+        setLength(data.modules.length || 0);
+      } catch (error) {
+        console.error("Failed to fetch course:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchModules();
-  }, [])
+  }, [courseId]);
 
   // Function to handle the textarea input change (need to work on this)
   const handleInputChange = (
@@ -98,12 +106,23 @@ export default function CourseDetailsPage() {
     }));
   };
 
-
-
   useEffect(() => {
     if (!course) return;
     setEnrolled(user.isEnrolled(courseId));
   }, [courseId]);
+
+  if (loading) {
+    return (
+      <>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-emerald-500 border-dashed rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading course...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (!course) {
     return <CourseNotFound />;
@@ -125,16 +144,13 @@ export default function CourseDetailsPage() {
     });
   };
 
-  const progressPercentage = Math.round(
-    (completedModules.size / course.modules.length) * 100
-  );
+  const progressPercentage = Math.round((completedModules.size / length) * 100);
 
   // If enrolled, show learning interface
   if (enrolled) {
     const currentModule = course.modules[activeModule];
     return (
       <>
-        <Header />
         <div className="min-h-screen bg-gray-50 flex flex-col">
           {/* Top Header */}
           <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
@@ -154,7 +170,7 @@ export default function CourseDetailsPage() {
                   {course.title}
                 </h1>
                 <p className="text-sm text-gray-600">
-                  Module {activeModule + 1} of {course.modules.length}
+                  Module {activeModule + 1} of {length}
                 </p>
               </div>
             </div>
@@ -205,7 +221,7 @@ export default function CourseDetailsPage() {
                 <ModuleContent
                   currentModule={currentModule}
                   activeModule={activeModule}
-                  courseLength={course.modules.length}
+                  courseLength={length}
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   setActiveModule={setActiveModule}
