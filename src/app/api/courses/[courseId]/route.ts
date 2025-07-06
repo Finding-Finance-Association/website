@@ -25,7 +25,9 @@ export async function GET(request: Request, context: { params: { courseId: strin
     const modulesSnapshot = await getDocs(modulesRef);
 
     const modules = await Promise.all(
-      modulesSnapshot.docs.map(async (moduleDoc) => {
+      modulesSnapshot.docs
+        .sort((a, b) => (a.data().order || 0) - (b.data().order || 0)) // Sort modules by order
+        .map(async (moduleDoc) => {
         const moduleData = {
           id: moduleDoc.id,
           ...moduleDoc.data(),
@@ -41,10 +43,24 @@ export async function GET(request: Request, context: { params: { courseId: strin
         );
         const contentBlocksSnapshot = await getDocs(contentBlockRef);
 
-        const contentBlocks = contentBlocksSnapshot.docs.map((cdDoc) => ({
-          id: cdDoc.id,
-          ...cdDoc.data(),
-        }));
+        const contentBlocks = contentBlocksSnapshot.docs
+          .map((cdDoc) => {
+            const data = cdDoc.data();
+
+            if (data.content && typeof data.content === 'object') {
+              return {
+                id: cdDoc.id,
+                ...data,
+                ...data.content,
+              };
+            }
+
+            return {
+              id: cdDoc.id,
+              ...data,
+            };
+          })
+          .sort((a, b) => (a.order || 0) - (b.order || 0)); // Sort by order field
 
         return {
           ...moduleData,

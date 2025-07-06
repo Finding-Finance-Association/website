@@ -17,6 +17,7 @@ interface Module {
   title: string;
   outcome: string;
   hasQuiz: boolean;
+  order?: number;
 }
 
 export default function ModuleDetailPage() {
