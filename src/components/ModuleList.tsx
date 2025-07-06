@@ -10,10 +10,14 @@ interface Props {
 }
 
 export default function ModuleList({ courseId, modules, isEnrolled }: Props) {
+  // Sort modules by order before rendering
+  const sortedModules = [...modules].sort((a, b) => (a.order || 0) - (b.order || 0));
+
   return (
     <ul className="space-y-4 animate-fade-in">
-      {modules.map((mod, index) => {
+      {sortedModules.map((mod, index) => {
         const locked = !isEnrolled;
+        const displayOrder = mod.order || index + 1;
         return (
           <li
             key={mod.id}
@@ -24,7 +28,7 @@ export default function ModuleList({ courseId, modules, isEnrolled }: Props) {
             }`}
           >
             <span>
-              {index + 1}. {mod.title}
+              {displayOrder}. {mod.title}
             </span>
             {!locked && (
               <Link href={`/courses/${courseId}/learn?module=${mod.id}`}>

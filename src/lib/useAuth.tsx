@@ -1,25 +1,23 @@
 "use client";
 
 import {
-  useState,
-  useEffect,
   createContext,
   useContext,
+  useEffect,
+  useState,
   ReactNode,
 } from "react";
-import {
-  onAuthStateChanged,
-  signOut,
-  User as FirebaseUser,
-} from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { toast } from "react-hot-toast";
+import { useUserStore } from "@/stores/userStore";
+import { useMemo } from "react";
 
 type UserData = {
-  username?: string;
-  email?: string;
   uid: string;
+  email: string;
+  username: string;
   enrolledCourseIds: string[];
 };
 
@@ -32,8 +30,14 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const setUserStore = useUserStore((state) => state.setUser);
+  const clearUserStore = useUserStore((state) => state.clearUser);
+  const uid = useUserStore((state) => state.uid);
+  const email = useUserStore((state) => state.email);
+  const username = useUserStore((state) => state.username);
+  const enrolledCourseIds = useUserStore((state) => state.enrolledCourseIds);
 
   useEffect(() => {
     let unsubscribeSnapshot: (() => void) | null = null;
@@ -41,28 +45,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const userRef = doc(db, "users", firebaseUser.uid);
-
-        // Set up real-time listener
         unsubscribeSnapshot = onSnapshot(userRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setUser({
+            setUserStore({
               uid: firebaseUser.uid,
               email: firebaseUser.email || "",
-              username:
-                data.username ||
-                firebaseUser.displayName?.split(" ")[0] ||
-                firebaseUser.email?.split("@")[0] ||
-                "User",
+              username: data.username || firebaseUser.displayName || "User",
               enrolledCourseIds: data.enrolledCourseIds || [],
             });
           } else {
-            setUser(null);
+            clearUserStore();
           }
           setLoading(false);
         });
       } else {
-        setUser(null);
+        clearUserStore();
         setLoading(false);
       }
     });
@@ -71,19 +69,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       unsubscribeAuth();
       if (unsubscribeSnapshot) unsubscribeSnapshot();
     };
-  }, []);
+  }, [setUserStore, clearUserStore]);
 
   const logout = async () => {
     await signOut(auth);
     toast.success("Logged out successfully!");
-    setUser(null);
+    clearUserStore();
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user: uid && email && username
+        ? {
+            uid,
+            email,
+            username,
+            enrolledCourseIds,
+          }
+        : null,
+      loading,
+      logout,
+    }),
+    [uid, email, username, enrolledCourseIds, loading, logout]
   );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export default function useAuth() {

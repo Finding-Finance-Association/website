@@ -20,6 +20,7 @@ interface ContentBlock {
   markdown?: string;
   text?: string;
   items?: string[];
+  order?: number;
 }
 
 interface Module {
@@ -160,33 +161,64 @@ export default function ModuleContent({
 
               switch (block.type) {
                 case "video":
+
+                  // Helper function to extract video URL from different formats
+                  const getVideoUrl = (url: string) => {
+                    if (!url) return null;
+
+                    // If it's already an embed URL, use it directly
+                    if (url.includes('youtube.com/embed/') || url.includes('youtu.be/embed/')) {
+                      return url;
+                    }
+
+                    // Extract YouTube video ID from various formats
+                    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+                    const match = url.match(youtubeRegex);
+                    if (match) {
+                      return `https://www.youtube.com/embed/${match[1]}`;
+                    }
+
+                    // For other URLs, try to use them directly
+                    return url;
+                  };
+
+                  const videoUrl = getVideoUrl(block.url || '');
+
                   return (
                     <div
                       key={block.id}
                       className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
                     >
                       <div className="aspect-video bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative group">
-                        {block.url ? (
+                        {videoUrl ? (
                           <iframe
-                            src={block.url}
+                            src={videoUrl}
                             title={block.title || "Video Lesson"}
-                            className="absolute top-0 left-0 w-full h-full"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            className="absolute top-0 left-0 w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
+                            referrerPolicy="strict-origin-when-cross-origin"
                           />
                         ) : (
                           <div className="flex items-center justify-center h-full">
-                            <button className="absolute inset-0 bg-black/20 hover:bg-black/30 transition-all duration-300 flex items-center justify-center group-hover:bg-black/40">
-                              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                                <FiPlay className="w-16 h-16 text-white drop-shadow-lg" />
-                              </motion.div>
-                            </button>
-                            <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 mt-4 text-center text-white z-10">
-                              <h3 className="text-2xl font-medium mb-1">
-                                {block.title || currentModule?.title}
+                            <div className="text-center text-white">
+                              <FiPlay className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                              <h3 className="text-xl font-medium mb-2">
+                                {block.title || "Video Not Available"}
                               </h3>
-                              <p className="text-gray-300 text-lg">Video Lesson</p>
+                              <p className="text-gray-400">
+                                {block.url ? "Unable to load video" : "No video URL provided"}
+                              </p>
+                              {block.url && (
+                                <a
+                                  href={block.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-block mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                  Open Video Link
+                                </a>
+                              )}
                             </div>
                           </div>
                         )}
@@ -220,36 +252,79 @@ export default function ModuleContent({
                       className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
                     >
                       <div className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4">
-                        <ReactMarkdown
-                          components={{
-                            h3: ({ children }) => (
-                              <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-6 first:mt-0">
-                                {children}
-                              </h3>
-                            ),
-                            p: ({ children }) => (
-                              <p className="text-gray-700 leading-relaxed mb-4">
-                                {children}
-                              </p>
-                            ),
-                            ul: ({ children }) => (
-                              <ul className="space-y-2 mb-4">{children}</ul>
-                            ),
-                            li: ({ children }) => (
-                              <li className="flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                                <span>{children}</span>
-                              </li>
-                            ),
-                            strong: ({ children }) => (
-                              <strong className="font-semibold text-gray-900">
-                                {children}
-                              </strong>
-                            ),
-                          }}
-                        >
-                          {block.markdown}
-                        </ReactMarkdown>
+                        {block.markdown ? (
+                          <ReactMarkdown
+                            components={{
+                              h1: ({ children }) => (
+                                <h1 className="text-3xl font-bold text-gray-900 mb-6 mt-8 first:mt-0">
+                                  {children}
+                                </h1>
+                              ),
+                              h2: ({ children }) => (
+                                <h2 className="text-2xl font-semibold text-gray-900 mb-5 mt-7 first:mt-0">
+                                  {children}
+                                </h2>
+                              ),
+                              h3: ({ children }) => (
+                                <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-6 first:mt-0">
+                                  {children}
+                                </h3>
+                              ),
+                              h4: ({ children }) => (
+                                <h4 className="text-lg font-semibold text-gray-900 mb-3 mt-5 first:mt-0">
+                                  {children}
+                                </h4>
+                              ),
+                              p: ({ children }) => (
+                                <p className="text-gray-700 leading-relaxed mb-4">
+                                  {children}
+                                </p>
+                              ),
+                              ul: ({ children }) => (
+                                <ul className="list-disc list-inside space-y-2 mb-4 ml-4">{children}</ul>
+                              ),
+                              ol: ({ children }) => (
+                                <ol className="list-decimal list-inside space-y-2 mb-4 ml-4">{children}</ol>
+                              ),
+                              li: ({ children }) => (
+                                <li className="text-gray-700 leading-relaxed">
+                                  {children}
+                                </li>
+                              ),
+                              strong: ({ children }) => (
+                                <strong className="font-semibold text-gray-900">
+                                  {children}
+                                </strong>
+                              ),
+                              em: ({ children }) => (
+                                <em className="italic text-gray-700">
+                                  {children}
+                                </em>
+                              ),
+                              blockquote: ({ children }) => (
+                                <blockquote className="border-l-4 border-blue-500 pl-4 py-2 my-4 bg-blue-50 italic text-gray-700">
+                                  {children}
+                                </blockquote>
+                              ),
+                              code: ({ children }) => (
+                                <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">
+                                  {children}
+                                </code>
+                              ),
+                              pre: ({ children }) => (
+                                <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                                  {children}
+                                </pre>
+                              ),
+                            }}
+                          >
+                            {block.markdown}
+                          </ReactMarkdown>
+                        ) : (
+                          <div className="text-gray-500 italic">
+                            No markdown content available
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
