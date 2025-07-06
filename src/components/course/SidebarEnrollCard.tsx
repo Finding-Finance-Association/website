@@ -1,40 +1,54 @@
 "use client";
+
 import { FiBookOpen, FiCheck } from "react-icons/fi";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import useAuth from "@/lib/useAuth";
 import { motion } from "framer-motion";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useUser } from "@/lib/useUser";
+import { useUserStore } from "@/stores/userStore";
 
 interface SidebarEnrollCardProps {
   courseId: string;
 }
 
 export default function SidebarEnrollCard({ courseId }: SidebarEnrollCardProps) {
-  const user = useAuth();
   const router = useRouter();
+  const {
+    uid,
+    isLoggedIn,
+    isEnrolled,
+  } = useUser();
+  const addEnrollment = useUserStore((state) => state.addEnrollment);
   const [isEnrolling, setIsEnrolling] = useState(false);
 
-  const alreadyEnrolled = user?.user?.enrolledCourseIds?.includes(courseId);
+  const alreadyEnrolled = isEnrolled(courseId);
 
   const handleEnroll = async () => {
-    if (!user?.user) {
+    if (!isLoggedIn) {
       router.push("/login");
+      return;
+    }
+
+    if (!uid) {
+      console.error("User ID is missing.");
       return;
     }
 
     setIsEnrolling(true);
 
     try {
-      const userRef = doc(db, "users", user.user.uid);
-
+      // Update Firestore
+      const userRef = doc(db, "users", uid);
       await updateDoc(userRef, {
         enrolledCourseIds: arrayUnion(courseId),
       });
 
-      router.refresh();
+      // Update Zustand store immediately for instant UI update
+      addEnrollment(courseId);
 
+      // No need for router.refresh() since Zustand will trigger re-renders
     } catch (error) {
       console.error("Error enrolling user:", error);
     } finally {
