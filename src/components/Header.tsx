@@ -75,6 +75,7 @@ export default function Header() {
                   alt="FFA logo"
                   width={40}
                   height={40}
+                  priority
                   className="rounded-full ring-2 ring-gray-100 group-hover:ring-green-200 transition-all duration-300"
                 />
               </motion.div>
