@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import useAuth from "@/lib/useAuth";
 import { usePathname } from "next/navigation";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,6 +17,20 @@ export default function Header() {
   const [isScrolledPastTitle, setIsScrolledPastTitle] = useState(false);
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
+
+  useEffect(() => {
+    const originalWarn = console.warn;
+    console.warn = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('Skipping auto-scroll behavior')) {
+        return;
+      }
+      originalWarn.apply(console, args);
+    };
+
+    return () => {
+      console.warn = originalWarn;
+    };
+  }, []);
 
   useEffect(() => {
     if (!isLandingPage) return;
@@ -75,6 +87,7 @@ export default function Header() {
                   alt="FFA logo"
                   width={40}
                   height={40}
+                  priority
                   className="rounded-full ring-2 ring-gray-100 group-hover:ring-green-200 transition-all duration-300"
                 />
               </motion.div>

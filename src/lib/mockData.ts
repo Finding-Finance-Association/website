@@ -20,6 +20,7 @@ export interface ContentBlock {
   items?: string[];
   quizId?: string;
   text?: string;
+  order?: number;
 }
 
 export interface Module {
@@ -28,6 +29,7 @@ export interface Module {
   outcome?: string;
   contentType?: string;
   contentBlocks: ContentBlock[];
+  order?: number;
 }
 
 export interface Question {

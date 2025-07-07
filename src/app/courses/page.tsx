@@ -42,7 +42,7 @@ export default function CoursesPage() {
         }
         const data = await res.json();
         setAllCourses(data);
-        console.log("courses data : ", data);
+        // console.log("courses data : ", data);
       } catch (error: any) {
         console.log(error.message || "Unexpected Error");
       }

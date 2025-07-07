@@ -4,6 +4,7 @@ import "./globals.css";
 // import AnimatedBackground from "@/components/AnimatedBackground";
 import { AuthProvider } from "@/lib/useAuth";
 import { Toaster } from "react-hot-toast";
+import { ProgressSyncProvider } from "@/components/ProgressSyncProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,8 +35,10 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Toaster />{/* <AnimatedBackground /> */}
-          {children}
+          <ProgressSyncProvider>
+            <Toaster />{/* <AnimatedBackground /> */}
+            {children}
+          </ProgressSyncProvider>
         </body>
       </AuthProvider>
     </html>

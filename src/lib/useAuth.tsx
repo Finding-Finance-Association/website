@@ -1,15 +1,24 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
-import { onAuthStateChanged, signOut, User as FirebaseUser } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
+import { useUserStore } from "@/stores/userStore";
+import { useMemo } from "react";
 
 type UserData = {
-  username?: string;
-  email?: string;
   uid: string;
+  email: string;
+  username: string;
+  enrolledCourseIds: string[];
 };
 
 type AuthContextType = {
@@ -21,56 +30,75 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const setUserStore = useUserStore((state) => state.setUser);
+  const clearUserStore = useUserStore((state) => state.clearUser);
+  const uid = useUserStore((state) => state.uid);
+  const email = useUserStore((state) => state.email);
+  const username = useUserStore((state) => state.username);
+  const enrolledCourseIds = useUserStore((state) => state.enrolledCourseIds);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
+    let unsubscribeSnapshot: (() => void) | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        try {
-          const userDocRef = doc(db, "users", firebaseUser.uid);
-          const userSnap = await getDoc(userDocRef);
-
-          const username = userSnap.exists()
-            ? userSnap.data().username
-            : firebaseUser.displayName?.split(" ")[0];
-
-          setUser({
-            email: firebaseUser.email || "",
-            uid: firebaseUser.uid,
-            username: username || firebaseUser.email?.split("@")[0] || "User",
-          });
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setUser(null);
-        }
+        const userRef = doc(db, "users", firebaseUser.uid);
+        unsubscribeSnapshot = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserStore({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email || "",
+              username: data.username || firebaseUser.displayName || "User",
+              enrolledCourseIds: data.enrolledCourseIds || [],
+            });
+          } else {
+            clearUserStore();
+          }
+          setLoading(false);
+        });
       } else {
-        setUser(null);
+        clearUserStore();
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
+  }, [setUserStore, clearUserStore]);
 
   const logout = async () => {
     await signOut(auth);
     toast.success("Logged out successfully!");
-    setUser(null);
+    clearUserStore();
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user: uid && email && username
+        ? {
+            uid,
+            email,
+            username,
+            enrolledCourseIds,
+          }
+        : null,
+      loading,
+      logout,
+    }),
+    [uid, email, username, enrolledCourseIds, loading, logout]
   );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export default function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

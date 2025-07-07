@@ -1,7 +1,10 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { getCourseById } from "@/lib/mockData";
+
 import { useUser } from "@/lib/useUser";
+import { useCourseProgressStore } from "@/stores/courseProgressStore";
+import { useUIStore } from "@/stores/uiStore";
+
 import ModuleList from "@/components/ModuleList";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
@@ -44,6 +47,8 @@ export interface Module {
   outcome?: string;
   contentType?: string;
   contentBlocks: ContentBlock[];
+  quizzes?: Question[];
+  order?: number;
 }
 
 export interface Question {
@@ -65,45 +70,81 @@ export default function CourseDetailsPage() {
   const [course, setCourse] = useState<DetailedCourse | null>(null);
   const user = useUser();
   const [enrolled, setEnrolled] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeModule, setActiveModule] = useState(0);
-  const [activeTab, setActiveTab] = useState<"lesson" | "quiz">("lesson");
-  const [completedModules, setCompletedModules] = useState(new Set<number>());
+  const [length, setLength] = useState(0);
 
-  const [userInput, setUserInput] = useState<Record<string, string>>({});
+  // Zustand stores
+  const {
+    setActiveModule: setActiveModuleStore,
+    setActiveTab: setActiveTabStore,
+    toggleModuleCompletion: toggleModuleCompletionStore,
+
+    getCompletedModules,
+    getActiveModule,
+    getActiveTab,
+
+    getProgressPercentage,
+  } = useCourseProgressStore();
+
+  const {
+    setSidebarOpen,
+
+    setLoading: setLoadingStore,
+    getSidebarOpen,
+    getLoading,
+  } = useUIStore();
+
+  // Get current state from stores
+  const activeModule = getActiveModule(courseId);
+  const activeTab = getActiveTab(courseId);
+  const completedModules = getCompletedModules(courseId);
+  const sidebarOpen = getSidebarOpen(`course-${courseId}`, true);
+  const loading = getLoading(`course-${courseId}`);
+
+  // Use the sync hook for this course
+
 
   useEffect(() => {
-    const fetchModules = async() => {
-      const res = await fetch(`/api/courses/${courseId}`)
-      if(!res.ok){
-        const errorData = await res.json()
-        throw new Error(errorData.err || 'Server Error')
-      }
+    const fetchModules = async () => {
+      try {
+        const res = await fetch(`/api/courses/${courseId}`);
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.err || "Server Error");
+        }
 
-      const data = await res.json();
-      setCourse(data);
-      console.log(data)
+        const data = await res.json();
+        setCourse(data);
+        setLength(data.modules.length || 0);
+      } catch (error) {
+        console.error("Failed to fetch course:", error);
+      } finally {
+        setLoadingStore(`course-${courseId}`, false);
+      }
     };
     fetchModules();
-  }, [])
-
-  // Function to handle the textarea input change (need to work on this)
-  const handleInputChange = (
-    blockId: string,
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setUserInput((prev) => ({
-      ...prev,
-      [blockId]: e.target.value,
-    }));
-  };
-
-
-
-  useEffect(() => {
-    if (!course) return;
-    setEnrolled(user.isEnrolled(courseId));
   }, [courseId]);
+
+
+
+  // Check enrollment status when course loads or enrollment changes
+  useEffect(() => {
+    if (course && courseId) {
+      setEnrolled(user.isEnrolled(courseId));
+    }
+  }, [courseId, user.enrolledCourseIds, !!course]);
+
+  if (loading) {
+    return (
+      <>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-emerald-500 border-dashed rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading course...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (!course) {
     return <CourseNotFound />;
@@ -113,34 +154,19 @@ export default function CourseDetailsPage() {
     router.back();
   };
 
-  const toggleModuleCompletion = (moduleIndex: number) => {
-    setCompletedModules((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(moduleIndex)) {
-        newSet.delete(moduleIndex);
-      } else {
-        newSet.add(moduleIndex);
-      }
-      return newSet;
-    });
-  };
-
-  const progressPercentage = Math.round(
-    (completedModules.size / course.modules.length) * 100
-  );
+  const progressPercentage = getProgressPercentage(courseId, length);
 
   // If enrolled, show learning interface
   if (enrolled) {
     const currentModule = course.modules[activeModule];
     return (
       <>
-        <Header />
         <div className="min-h-screen bg-gray-50 flex flex-col">
           {/* Top Header */}
           <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+                onClick={() => setSidebarOpen(`course-${courseId}`, !sidebarOpen)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 {sidebarOpen ? (
@@ -154,7 +180,7 @@ export default function CourseDetailsPage() {
                   {course.title}
                 </h1>
                 <p className="text-sm text-gray-600">
-                  Module {activeModule + 1} of {course.modules.length}
+                  Module {activeModule + 1} of {length}
                 </p>
               </div>
             </div>
@@ -191,12 +217,12 @@ export default function CourseDetailsPage() {
               completedModules={completedModules}
               activeTab={activeTab}
               sidebarOpen={sidebarOpen}
-              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+              onToggleSidebar={() => setSidebarOpen(`course-${courseId}`, !sidebarOpen)}
               onSelectModule={(i) => {
-                setActiveModule(i);
+                setActiveModuleStore(courseId, i);
               }}
-              onSetTab={setActiveTab}
-              onToggleComplete={toggleModuleCompletion}
+              onSetTab={(tab) => setActiveTabStore(courseId, tab)}
+              onToggleComplete={(moduleIndex) => toggleModuleCompletionStore(courseId, moduleIndex)}
             />
 
             {/* Main Content Area */}
@@ -205,13 +231,14 @@ export default function CourseDetailsPage() {
                 <ModuleContent
                   currentModule={currentModule}
                   activeModule={activeModule}
-                  courseLength={course.modules.length}
+                  courseLength={length}
                   activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                  setActiveModule={setActiveModule}
-                  toggleModuleCompletion={toggleModuleCompletion}
-                  quizData={course.quizzes}
+                  setActiveTab={(tab) => setActiveTabStore(courseId, tab)}
+                  setActiveModule={(moduleIndex) => setActiveModuleStore(courseId, moduleIndex)}
+                  toggleModuleCompletion={(moduleIndex) => toggleModuleCompletionStore(courseId, moduleIndex)}
+                  quizData={currentModule?.quizzes || []}
                   isEnrolled={enrolled}
+                  courseId={courseId}
                 />
               </div>
             </div>

@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Course {
   title: string;
@@ -27,6 +28,7 @@ interface Module {
   title: string;
   outcome: string;
   hasQuiz: boolean;
+  order: number;
 }
 
 export default function CourseDetailPage() {
@@ -37,6 +39,7 @@ export default function CourseDetailPage() {
     title: "",
     outcome: "",
     hasQuiz: false,
+    order: 1,
   });
   const [editMode, setEditMode] = useState(false);
   const [editForm, setEditForm] = useState<Course | null>(null);
@@ -73,11 +76,18 @@ export default function CourseDetailPage() {
 
         const modulesRef = collection(courseRef, "modules");
         const modulesSnap = await getDocs(modulesRef);
-        const mods = modulesSnap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Module[];
-        setModules(mods);
+        const mods = modulesSnap.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Module[];
+
+        // Sort modules by order
+        const sortedMods = mods.sort((a, b) => (a.order || 0) - (b.order || 0));
+        setModules(sortedMods);
+
+        // Set default order for new module
+        setForm(prev => ({ ...prev, order: sortedMods.length + 1 }));
       } catch (err) {
         setError("Failed to load course or modules.");
         console.error(err);
@@ -98,6 +108,8 @@ export default function CourseDetailPage() {
         ...prev,
         [name]: (e.target as HTMLInputElement).checked,
       }));
+    } else if (name === "order") {
+      setForm((prev) => ({ ...prev, [name]: Number(value) }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
@@ -120,8 +132,8 @@ export default function CourseDetailPage() {
       );
       const newModuleRef = await addDoc(modulesRef, form);
       const newModule = { ...form, id: newModuleRef.id };
-      setModules((prev) => [...prev, newModule]);
-      setForm({ title: "", outcome: "", hasQuiz: false });
+      setModules((prev) => [...prev, newModule].sort((a, b) => (a.order || 0) - (b.order || 0)));
+      setForm({ title: "", outcome: "", hasQuiz: false, order: modules.length + 1 });
     } catch (err) {
       setError("Failed to add module.");
       console.error(err);
@@ -192,15 +204,12 @@ export default function CourseDetailPage() {
   };
 
   return (
-    <div
-      style={{
-        padding: "2rem",
-        fontFamily: "sans-serif",
-        maxWidth: "900px",
-        margin: "auto",
-      }}
+    <AdminLayout
+      courseTitle={course?.title}
+      courseId={courseId as string}
+      pageTitle={course?.title || "Course Details"}
+      pageDescription="Manage course information and modules. Add new modules or edit existing ones."
     >
-      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Course Detail</h1>
 
       {error && (
         <p style={{ color: "red", marginBottom: "1rem" }}>
@@ -210,7 +219,26 @@ export default function CourseDetailPage() {
       )}
 
       {loadingCourse ? (
-        <p>Loading course...</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+          <span
+            style={{
+              width: "1.5rem",
+              height: "1.5rem",
+              border: "3px solid #ccc",
+              borderTop: "3px solid #0070f3",
+              borderRadius: "50%",
+              display: "inline-block",
+              animation: "spin 1s linear infinite",
+            }}
+          />
+          <span>Loading course...</span>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg);}
+              100% { transform: rotate(360deg);}
+            }
+          `}</style>
+        </div>
       ) : (
         <>
           {!editMode && course && (
@@ -387,6 +415,21 @@ export default function CourseDetailPage() {
           rows={3}
           disabled={addingModule}
         />
+        <input
+          name="order"
+          type="number"
+          placeholder="Order (1, 2, 3...)"
+          value={form.order}
+          onChange={handleChange}
+          required
+          min={1}
+          disabled={addingModule}
+          style={{
+            padding: "0.5rem",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+          }}
+        />
         <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <input
             type="checkbox"
@@ -436,7 +479,19 @@ export default function CourseDetailPage() {
               }}
             >
               <div>
-                <h3 style={{ margin: 0 }}>{mod.title}</h3>
+                <h3 style={{ margin: 0 }}>
+                  <span style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "0.2rem 0.5rem",
+                    borderRadius: "4px",
+                    fontSize: "0.8rem",
+                    marginRight: "0.5rem"
+                  }}>
+                    #{mod.order || 0}
+                  </span>
+                  {mod.title}
+                </h3>
                 <p style={{ margin: "0.25rem 0" }}>
                   <strong>Outcome:</strong> {mod.outcome}{" "}
                   {mod.hasQuiz && "· Has Quiz"}
@@ -478,6 +533,6 @@ export default function CourseDetailPage() {
           ))}
         </ul>
       )}
-    </div>
+    </AdminLayout>
   );
 }
