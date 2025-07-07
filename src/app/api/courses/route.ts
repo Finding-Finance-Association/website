@@ -1,17 +1,20 @@
-import { NextResponse } from 'next/server';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { NextResponse } from 'next/server'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
+
+export const runtime = 'nodejs'
 
 export async function GET() {
-  try {
-    const snap = await getDocs(collection(db, 'courses_coll'));
-    const courses = snap.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }))
-    return NextResponse.json(courses)
-  } catch (err) {
-    return NextResponse.json({err: 'Failed to fetch courses'}, {status: 500})
-  }
-  
+  const snap = await getDocs(collection(db, 'courses_coll'))
+  const courses = snap.docs.map(d => {
+    const { title, description, hours, thumbnail, category } = d.data() as {
+      title: string
+      description: string
+      hours: number
+      thumbnail: string
+      category: string
+    }
+    return { id: d.id, title, description, hours, thumbnail, category }
+  })
+  return NextResponse.json(courses)
 }

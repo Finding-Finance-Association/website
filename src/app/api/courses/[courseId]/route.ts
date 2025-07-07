@@ -1,54 +1,25 @@
-import { NextResponse } from 'next/server';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { NextResponse } from 'next/server'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
-// Force Node.js runtime to avoid Edge Runtime limitations
-export const runtime = 'nodejs';
+export const runtime = 'nodejs'
 
 export async function GET(
-  request: Request,
-  context: any // Accept as any to avoid TS errors temporarily
+  _req: Request,
+  { params }: { params: { courseId: string } }
 ) {
-  // Await the params object before destructuring
-  const params = await context.params;
-  const courseId = params.courseId;
-
-  try {
-    const modulesRef = collection(db, 'courses_coll', courseId, 'modules');
-    const modulesSnapshot = await getDocs(modulesRef);
-
-    const modules = await Promise.all(
-      modulesSnapshot.docs.map(async (moduleDoc) => {
-        const moduleData = {
-          id: moduleDoc.id,
-          ...moduleDoc.data(),
-        };
-
-        const contentBlockRef = collection(
-          db,
-          'courses_coll',
-          courseId,
-          'modules',
-          moduleDoc.id,
-          'contentBlocks'
-        );
-        const contentBlocksSnapshot = await getDocs(contentBlockRef);
-
-        const contentBlocks = contentBlocksSnapshot.docs.map((cdDoc) => ({
-          id: cdDoc.id,
-          ...cdDoc.data(),
-        }));
-
-        return {
-          ...moduleData,
-          contentBlocks,
-        };
-      })
-    );
-
-    return NextResponse.json(modules);
-  } catch (error) {
-    console.error('Error fetching Modules:', error);
-    return NextResponse.json({ error: 'Failed to fetch modules' }, { status: 500 });
+  const { courseId } = params
+  const ref = doc(db, 'courses_coll', courseId)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) {
+    return NextResponse.json(null, { status: 404 })
   }
+  const { title, description, hours, thumbnail, category } = snap.data() as {
+    title: string
+    description: string
+    hours: number
+    thumbnail: string
+    category: string
+  }
+  return NextResponse.json({ id: snap.id, title, description, hours, thumbnail, category })
 }
