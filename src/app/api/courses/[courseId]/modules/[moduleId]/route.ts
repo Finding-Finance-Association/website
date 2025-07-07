@@ -1,28 +1,24 @@
 import { NextResponse } from 'next/server'
-import { doc, getDoc, collection, getDocs, query, limit } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+
+export const runtime = 'nodejs'
 
 export async function GET(
   _req: Request,
   { params }: { params: { courseId: string; moduleId: string } }
 ) {
   const { courseId, moduleId } = params
-  const modRef = doc(db, 'courses', courseId, 'modules', moduleId)
-  const modSnap = await getDoc(modRef)
-  if (!modSnap.exists()) {
+  const ref = doc(db, 'courses_coll', courseId, 'modules', moduleId)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) {
     return NextResponse.json(null, { status: 404 })
   }
-  const { category, created_at, created_by, ...rest } = modSnap.data()
-  const quizQ = query(
-    collection(db, 'courses', courseId, 'modules', moduleId, 'quiz'),
-    limit(1)
-  )
-  const quizSnap = await getDocs(quizQ)
-  const hasQuiz = quizSnap.docs.length > 0
-
-  return NextResponse.json({
-    id: modSnap.id,
-    ...rest,
-    hasQuiz
-  })
+  const { title, outcome, order, hasQuiz } = snap.data() as {
+    title: string
+    outcome: object[]
+    order: number
+    hasQuiz: boolean
+  }
+  return NextResponse.json({ id: snap.id, title, outcome, order, hasQuiz })
 }

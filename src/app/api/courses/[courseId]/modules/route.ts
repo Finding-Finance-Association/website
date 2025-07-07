@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
-import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+
+export const runtime = 'nodejs'
 
 export async function GET(
   _req: Request,
@@ -8,32 +10,21 @@ export async function GET(
 ) {
   const { courseId } = params
 
-  // 1) fetch the modules in order
-  const modulesQuery = query(
-    collection(db, 'courses', courseId, 'modules'),
+  const modulesQ = query(
+    collection(db, 'courses_coll', courseId, 'modules'),
     orderBy('order')
   )
-  const modulesSnap = await getDocs(modulesQuery)
+  const snap = await getDocs(modulesQ)
 
-  // 2) for each module, check if it has at least one quiz doc
-  const modulesWithFlag = await Promise.all(
-    modulesSnap.docs.map(async (modDoc) => {
-      const { category, created_at, created_by, ...rest } = modDoc.data()
+  const modules = snap.docs.map(d => {
+    const { title, outcome, order, hasQuiz } = d.data() as {
+      title: string
+      outcome: object[]
+      order: number
+      hasQuiz: boolean
+    }
+    return { id: d.id, title, outcome, order, hasQuiz }
+  })
 
-      // head‐query the quiz subcollection
-      const quizQ = query(
-        collection(db, 'courses', courseId, 'modules', modDoc.id, 'quiz'),
-        limit(1)
-      )
-      const quizSnap = await getDocs(quizQ)
-      const hasQuiz = quizSnap.docs.length > 0
-
-      return {
-        id: modDoc.id,
-        ...rest,
-        hasQuiz,
-      }
-    })
-  )
-  return NextResponse.json(modulesWithFlag)
+  return NextResponse.json(modules)
 }

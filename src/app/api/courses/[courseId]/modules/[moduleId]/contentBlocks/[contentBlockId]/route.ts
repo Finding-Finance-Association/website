@@ -6,22 +6,32 @@ export const runtime = 'nodejs'
 
 export async function GET(
   _req: Request,
-  { params }: { params: { courseId: string; moduleId: string; quizId: string } }
+  { params }: {
+    params: {
+      courseId: string
+      moduleId: string
+      contentBlockId: string
+    }
+  }
 ) {
-  const { courseId, moduleId, quizId } = params
+  const { courseId, moduleId, contentBlockId } = params
   const ref = doc(
     db,
     'courses_coll',
     courseId,
     'modules',
     moduleId,
-    'quiz',
-    quizId
+    'contentBlocks',
+    contentBlockId
   )
   const snap = await getDoc(ref)
   if (!snap.exists()) {
     return NextResponse.json(null, { status: 404 })
   }
-  const { question, options, correctAnswer, type } = snap.data()!
-  return NextResponse.json({ id: snap.id, question, options, correctAnswer, type })
+  const { content, order, type } = snap.data() as {
+    content: string[]
+    order: number
+    type: string
+  }
+  return NextResponse.json({ id: snap.id, content, order, type })
 }
