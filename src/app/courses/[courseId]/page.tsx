@@ -47,6 +47,7 @@ export interface Module {
   outcome?: string;
   contentType?: string;
   contentBlocks: ContentBlock[];
+  quizzes?: Question[];
   order?: number;
 }
 
@@ -235,7 +236,7 @@ export default function CourseDetailsPage() {
                   setActiveTab={(tab) => setActiveTabStore(courseId, tab)}
                   setActiveModule={(moduleIndex) => setActiveModuleStore(courseId, moduleIndex)}
                   toggleModuleCompletion={(moduleIndex) => toggleModuleCompletionStore(courseId, moduleIndex)}
-                  quizData={course.quizzes}
+                  quizData={currentModule?.quizzes || []}
                   isEnrolled={enrolled}
                   courseId={courseId}
                 />

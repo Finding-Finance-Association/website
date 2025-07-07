@@ -5,6 +5,8 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "fir
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import AdminLayout from "@/components/admin/AdminLayout";
+import QuizPreview from "@/components/admin/QuizPreview";
 
 interface ContentBlock {
   id?: string;
@@ -20,9 +22,18 @@ interface Module {
   order?: number;
 }
 
+interface Question {
+  id?: string;
+  type: "mcq" | "text";
+  question: string;
+  options?: string[];
+  correctAnswer: string;
+}
+
 export default function ModuleDetailPage() {
   const { courseId, moduleId } = useParams();
   const [module, setModule] = useState<Module | null>(null);
+  const [courseTitle, setCourseTitle] = useState<string>("");
   const [contentForm, setContentForm] = useState<any>({});
   const [type, setType] = useState("text");
   const [order, setOrder] = useState(1);
@@ -33,9 +44,29 @@ export default function ModuleDetailPage() {
   const [editContentForm, setEditContentForm] = useState<any>({});
   const [editType, setEditType] = useState<string>("");
 
+  // Quiz management state
+  const [quizzes, setQuizzes] = useState<Question[]>([]);
+  const [quizForm, setQuizForm] = useState<Question>({
+    type: "mcq",
+    question: "",
+    options: ["", "", "", ""],
+    correctAnswer: "",
+  });
+  const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
+  const [showQuizForm, setShowQuizForm] = useState(false);
+
   useEffect(() => {
     const fetchModuleDetails = async () => {
       if (!courseId || !moduleId) return;
+
+      // Fetch course title
+      const courseRef = doc(db, "courses_coll", courseId as string);
+      const courseSnap = await getDoc(courseRef);
+      if (courseSnap.exists()) {
+        setCourseTitle(courseSnap.data().title || "");
+      }
+
+      // Fetch module details
       const moduleRef = doc(db, "courses_coll", courseId as string, "modules", moduleId as string);
       const moduleSnap = await getDoc(moduleRef);
       if (moduleSnap.exists()) {
@@ -44,6 +75,15 @@ export default function ModuleDetailPage() {
         const contentSnap = await getDocs(collection(moduleRef, "contentBlocks"));
         const content = contentSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ContentBlock[];
         setContentBlocks(content);
+
+        // Fetch quiz questions for this module
+        const quizzesRef = collection(moduleRef, "quizzes");
+        const quizzesSnap = await getDocs(quizzesRef);
+        const quizQuestions = quizzesSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Question[];
+        setQuizzes(quizQuestions);
       }
     };
     fetchModuleDetails();
@@ -124,17 +164,127 @@ export default function ModuleDetailPage() {
     setOrder(1);
   };
 
+  // Quiz Management Functions
+  const handleQuizFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    if (name.startsWith("option-")) {
+      const optionIndex = parseInt(name.split("-")[1]);
+      setQuizForm(prev => ({
+        ...prev,
+        options: prev.options?.map((opt, idx) => idx === optionIndex ? value : opt) || []
+      }));
+    } else {
+      setQuizForm(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleAddQuiz = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!courseId || !moduleId) return;
+
+    try {
+      const quizzesRef = collection(
+        doc(db, "courses_coll", courseId as string, "modules", moduleId as string),
+        "quizzes"
+      );
+
+      const quizData = {
+        ...quizForm,
+        options: quizForm.type === "mcq" ? quizForm.options?.filter(opt => opt.trim()) : undefined
+      };
+
+      const newQuizRef = await addDoc(quizzesRef, quizData);
+      const newQuiz = { ...quizData, id: newQuizRef.id };
+      setQuizzes(prev => [...prev, newQuiz]);
+
+      // Reset form
+      setQuizForm({
+        type: "mcq",
+        question: "",
+        options: ["", "", "", ""],
+        correctAnswer: "",
+      });
+      setShowQuizForm(false);
+    } catch (err) {
+      console.error("Failed to add quiz question:", err);
+    }
+  };
+
+  const handleDeleteQuiz = async (quizId: string) => {
+    if (!courseId || !moduleId || !confirm("Are you sure you want to delete this quiz question?")) return;
+
+    try {
+      const quizRef = doc(
+        db,
+        "courses_coll",
+        courseId as string,
+        "modules",
+        moduleId as string,
+        "quizzes",
+        quizId
+      );
+      await deleteDoc(quizRef);
+      setQuizzes(prev => prev.filter(q => q.id !== quizId));
+    } catch (err) {
+      console.error("Failed to delete quiz question:", err);
+    }
+  };
+
+  const handleEditQuiz = (quiz: Question) => {
+    setQuizForm({
+      ...quiz,
+      options: quiz.options || ["", "", "", ""]
+    });
+    setEditingQuizId(quiz.id || null);
+    setShowQuizForm(true);
+  };
+
+  const handleUpdateQuiz = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!courseId || !moduleId || !editingQuizId) return;
+
+    try {
+      const quizRef = doc(
+        db,
+        "courses_coll",
+        courseId as string,
+        "modules",
+        moduleId as string,
+        "quizzes",
+        editingQuizId
+      );
+
+      const quizData = {
+        ...quizForm,
+        options: quizForm.type === "mcq" ? quizForm.options?.filter(opt => opt.trim()) : undefined
+      };
+
+      await setDoc(quizRef, quizData);
+      setQuizzes(prev => prev.map(q => q.id === editingQuizId ? { ...quizData, id: editingQuizId } : q));
+
+      // Reset form
+      setQuizForm({
+        type: "mcq",
+        question: "",
+        options: ["", "", "", ""],
+        correctAnswer: "",
+      });
+      setEditingQuizId(null);
+      setShowQuizForm(false);
+    } catch (err) {
+      console.error("Failed to update quiz question:", err);
+    }
+  };
+
   return (
-    <div
-      style={{
-        padding: "2rem",
-        fontFamily: "Arial, sans-serif",
-        maxWidth: "900px",
-        margin: "auto",
-        backgroundColor: "#fefefe",
-      }}
+    <AdminLayout
+      courseTitle={courseTitle}
+      moduleTitle={module?.title}
+      courseId={courseId as string}
+      moduleId={moduleId as string}
+      pageTitle={module?.title || "Module Content"}
+      pageDescription="Manage module content blocks. Add text, videos, lists, and other interactive elements."
     >
-      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Module Details</h1>
 
       {/* Module display or edit */}
       {!editMode && module && (
@@ -573,6 +723,282 @@ export default function ModuleDetailPage() {
           </li>
         ))}
       </ul>
-    </div>
+
+      {/* Quiz Management Section */}
+      {module?.hasQuiz && (
+        <div style={{ marginTop: "3rem", borderTop: "2px solid #e9ecef", paddingTop: "2rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+            <h2 style={{ fontSize: "1.5rem", margin: 0, color: "#495057" }}>
+              Module Quiz Questions ({quizzes.length})
+            </h2>
+            <button
+              onClick={() => setShowQuizForm(true)}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#28a745",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+              }}
+            >
+              + Add Quiz Question
+            </button>
+          </div>
+
+          {/* Quiz Form */}
+          {showQuizForm && (
+            <div style={{
+              backgroundColor: "#f8f9fa",
+              padding: "1.5rem",
+              border: "1px solid #dee2e6",
+              borderRadius: "8px",
+              marginBottom: "2rem"
+            }}>
+              <h3 style={{ marginTop: 0, marginBottom: "1rem" }}>
+                {editingQuizId ? "Edit Quiz Question" : "Add New Quiz Question"}
+              </h3>
+              <form onSubmit={editingQuizId ? handleUpdateQuiz : handleAddQuiz}>
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                    Question Type:
+                  </label>
+                  <select
+                    name="type"
+                    value={quizForm.type}
+                    onChange={handleQuizFormChange}
+                    style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc", width: "200px" }}
+                  >
+                    <option value="mcq">Multiple Choice</option>
+                    <option value="text">Text Answer</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                    Question:
+                  </label>
+                  <textarea
+                    name="question"
+                    value={quizForm.question}
+                    onChange={handleQuizFormChange}
+                    placeholder="Enter your question here..."
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "0.5rem",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                      minHeight: "80px",
+                      resize: "vertical"
+                    }}
+                  />
+                </div>
+
+                {quizForm.type === "mcq" && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                      Answer Options:
+                    </label>
+                    {quizForm.options?.map((option, index) => (
+                      <div key={index} style={{ marginBottom: "0.5rem" }}>
+                        <input
+                          type="text"
+                          name={`option-${index}`}
+                          value={option}
+                          onChange={handleQuizFormChange}
+                          placeholder={`Option ${index + 1}`}
+                          style={{
+                            width: "100%",
+                            padding: "0.5rem",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                    Correct Answer:
+                  </label>
+                  {quizForm.type === "mcq" ? (
+                    <select
+                      name="correctAnswer"
+                      value={quizForm.correctAnswer}
+                      onChange={handleQuizFormChange}
+                      required
+                      style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
+                    >
+                      <option value="">Select the correct answer</option>
+                      {quizForm.options?.filter(opt => opt.trim()).map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name="correctAnswer"
+                      value={quizForm.correctAnswer}
+                      onChange={handleQuizFormChange}
+                      placeholder="Enter the correct answer"
+                      required
+                      style={{
+                        width: "100%",
+                        padding: "0.5rem",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc"
+                      }}
+                    />
+                  )}
+                </div>
+
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#007bff",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {editingQuizId ? "Update Question" : "Add Question"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowQuizForm(false);
+                      setEditingQuizId(null);
+                      setQuizForm({
+                        type: "mcq",
+                        question: "",
+                        options: ["", "", "", ""],
+                        correctAnswer: "",
+                      });
+                    }}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#6c757d",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Quiz Questions List */}
+          {quizzes.length === 0 ? (
+            <p style={{ color: "#6c757d", fontStyle: "italic" }}>
+              No quiz questions yet. Add your first question to get started!
+            </p>
+          ) : (
+            <div style={{ display: "grid", gap: "1rem" }}>
+              {quizzes.map((quiz, index) => (
+                <div
+                  key={quiz.id}
+                  style={{
+                    border: "1px solid #dee2e6",
+                    borderRadius: "8px",
+                    padding: "1rem",
+                    backgroundColor: "#fff"
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                        <span style={{
+                          backgroundColor: quiz.type === "mcq" ? "#17a2b8" : "#28a745",
+                          color: "white",
+                          padding: "0.2rem 0.5rem",
+                          borderRadius: "4px",
+                          fontSize: "0.75rem",
+                          fontWeight: "bold"
+                        }}>
+                          {quiz.type === "mcq" ? "MCQ" : "TEXT"}
+                        </span>
+                        <span style={{ color: "#6c757d", fontSize: "0.9rem" }}>
+                          Question {index + 1}
+                        </span>
+                      </div>
+                      <h4 style={{ margin: "0 0 0.5rem 0", color: "#495057" }}>
+                        {quiz.question}
+                      </h4>
+                      {quiz.type === "mcq" && quiz.options && (
+                        <div style={{ marginBottom: "0.5rem" }}>
+                          <strong style={{ fontSize: "0.9rem", color: "#6c757d" }}>Options:</strong>
+                          <ul style={{ margin: "0.25rem 0", paddingLeft: "1.5rem" }}>
+                            {quiz.options.map((option, optIndex) => (
+                              <li
+                                key={optIndex}
+                                style={{
+                                  color: option === quiz.correctAnswer ? "#28a745" : "#495057",
+                                  fontWeight: option === quiz.correctAnswer ? "bold" : "normal"
+                                }}
+                              >
+                                {option} {option === quiz.correctAnswer && "✓"}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      <div style={{ fontSize: "0.9rem", color: "#6c757d" }}>
+                        <strong>Correct Answer:</strong> {quiz.correctAnswer}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem", marginLeft: "1rem" }}>
+                      <button
+                        onClick={() => handleEditQuiz(quiz)}
+                        style={{
+                          padding: "0.4rem 0.75rem",
+                          backgroundColor: "#ffc107",
+                          color: "#212529",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                          fontSize: "0.8rem"
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteQuiz(quiz.id!)}
+                        style={{
+                          padding: "0.4rem 0.75rem",
+                          backgroundColor: "#dc3545",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                          fontSize: "0.8rem"
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Quiz Preview */}
+          <QuizPreview questions={quizzes} />
+        </div>
+      )}
+    </AdminLayout>
   );
 }

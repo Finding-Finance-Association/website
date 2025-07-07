@@ -62,9 +62,18 @@ export async function GET(request: Request, context: { params: { courseId: strin
           })
           .sort((a, b) => (a.order || 0) - (b.order || 0)); // Sort by order field
 
+        // Fetch quiz questions for this module
+        const quizzesRef = collection(moduleDoc.ref, "quizzes");
+        const quizzesSnapshot = await getDocs(quizzesRef);
+        const quizzes = quizzesSnapshot.docs.map((quizDoc) => ({
+          id: quizDoc.id,
+          ...quizDoc.data(),
+        }));
+
         return {
           ...moduleData,
           contentBlocks,
+          quizzes,
         };
       })
     );

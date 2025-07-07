@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Course {
   title: string;
@@ -203,15 +204,12 @@ export default function CourseDetailPage() {
   };
 
   return (
-    <div
-      style={{
-        padding: "2rem",
-        fontFamily: "sans-serif",
-        maxWidth: "900px",
-        margin: "auto",
-      }}
+    <AdminLayout
+      courseTitle={course?.title}
+      courseId={courseId as string}
+      pageTitle={course?.title || "Course Details"}
+      pageDescription="Manage course information and modules. Add new modules or edit existing ones."
     >
-      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Course Detail</h1>
 
       {error && (
         <p style={{ color: "red", marginBottom: "1rem" }}>
@@ -535,6 +533,6 @@ export default function CourseDetailPage() {
           ))}
         </ul>
       )}
-    </div>
+    </AdminLayout>
   );
 }

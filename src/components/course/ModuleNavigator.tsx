@@ -7,6 +7,7 @@ interface Module {
   title: string;
   outcome?: string;
   contentType?: string;
+  quizzes?: any[];
 }
 
 interface ModuleNavigatorProps {
@@ -184,7 +185,7 @@ export default function ModuleNavigator({
                   </motion.div>
 
                   {/* Quiz Shortcut */}
-                  {isActive && module.contentType === "quiz" && (
+                  {isActive && module.quizzes && module.quizzes.length > 0 && (
                     <motion.button
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
