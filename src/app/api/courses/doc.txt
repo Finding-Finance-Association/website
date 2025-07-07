@@ -1,0 +1,101 @@
+API: Get All Courses
+Method: GET
+Endpoint: /api/courses
+URL parameters: none
+Success response:
+Status: 200 OK
+Body: JSON array of course objects, each with fields:
+• id (string)
+• title (string)
+• description (string)
+• hours (number)
+• thumbnail (string)
+Error responses:
+• 405 Method Not Allowed (if any method other than GET is used)
+
+API: Get One Course
+Method: GET
+Endpoint: /api/courses/:courseId
+URL parameters:
+• courseId (string) – the ID of the course
+Success response:
+Status: 200 OK
+Body: a single course object with fields:
+• id (string)
+• title (string)
+• description (string)
+• hours (number)
+• thumbnail (string)
+Error responses:
+• 404 Not Found (if no course exists with that ID)
+• 405 Method Not Allowed
+
+API: Get Modules for a Course
+Method: GET
+Endpoint: /api/courses/:courseId/modules
+URL parameters:
+• courseId (string) – the ID of the course
+Success response:
+Status: 200 OK
+Body: JSON array of module objects, each with fields:
+• id (string)
+• title (string)
+• content_url (string)
+• order (number)
+• hasQuiz (boolean) – true if that module has at a quiz item; false otherwise
+Error responses:
+• 405 Method Not Allowed
+
+API: Get One Module
+Method: GET
+Endpoint: /api/courses/:courseId/modules/:moduleId
+URL parameters:
+• courseId (string) – the ID of the course
+• moduleId (string) – the ID of the module
+Success response:
+Status: 200 OK
+Body: a single module object with fields:
+• id (string)
+• title (string)
+• content_url (string)
+• order (number)
+• hasQuiz (boolean) – true if that module has at a quiz item; false otherwise
+Error responses:
+• 404 Not Found (if no module exists with that ID under that course)
+• 405 Method Not Allowed
+
+API: Get Quiz Items for a Module
+Method: GET
+Endpoint: /api/courses/:courseId/modules/:moduleId/quiz
+URL parameters:
+• courseId (string) – the ID of the course
+• moduleId (string) – the ID of the module
+Success response:
+Status: 200 OK
+Body: JSON array of quiz‐item objects, each with fields:
+• id (string)
+• question (string)
+• options (string[])
+• correct_answer (string)
+• type (string)
+Error responses:
+• 405 Method Not Allowed
+
+API: Get One Quiz Item
+Method: GET
+Endpoint: /api/courses/:courseId/modules/:moduleId/quiz/:quizId
+URL parameters:
+• courseId (string) – the ID of the course
+• moduleId (string) – the ID of the module
+• quizId (string) – the ID of the quiz item
+Success response:
+Status: 200 OK
+Body: a single quiz‐item object with fields:
+• id (string)
+• question (string)
+• options (string[])
+• correct_answer (string)
+• type (string)
+Error responses:
+• 404 Not Found (if no quiz item exists with that ID under that module)
+• 405 Method Not Allowed
