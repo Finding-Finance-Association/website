@@ -12,7 +12,7 @@ interface Module {
 interface ModuleNavigatorProps {
   modules: Module[];
   activeModule: number;
-  completedModules: Set<number>;
+  completedModules: Set<number> | number[] | any; // Allow any type for compatibility
   activeTab: "lesson" | "quiz";
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
@@ -32,8 +32,45 @@ export default function ModuleNavigator({
   onSetTab,
   onToggleComplete,
 }: ModuleNavigatorProps) {
+  // Helper functions to handle Set, Array, or any other type
+  const isCompleted = (index: number): boolean => {
+    // console.log("isCompleted called with:", index, "completedModules:", completedModules);
+
+    if (!completedModules) {
+      return false;
+    }
+
+    if (Array.isArray(completedModules)) {
+      return completedModules.includes(index);
+    }
+
+    if (completedModules && typeof completedModules.has === 'function') {
+      return completedModules.has(index);
+    }
+
+    // Fallback for any other type
+    return false;
+  };
+
+  const getCompletedCount = (): number => {
+    if (!completedModules) {
+      return 0;
+    }
+
+    if (Array.isArray(completedModules)) {
+      return completedModules.length;
+    }
+
+    if (completedModules && typeof completedModules.size === 'number') {
+      return completedModules.size;
+    }
+
+    // Fallback for any other type
+    return 0;
+  };
+
   const progressPercentage = Math.round(
-    (completedModules.size / modules.length) * 100
+    (getCompletedCount() / modules.length) * 100
   );
 
   return (
@@ -63,7 +100,7 @@ export default function ModuleNavigator({
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-600">Completed</span>
                 <span className="font-medium text-gray-900">
-                  {completedModules.size} of {modules.length} modules
+                  {getCompletedCount()} of {modules.length} modules
                 </span>
               </div>
               <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -81,7 +118,7 @@ export default function ModuleNavigator({
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             {modules.map((module, index) => {
               const isActive = index === activeModule;
-              const isCompleted = completedModules.has(index);
+              const moduleCompleted = isCompleted(index);
 
               return (
                 <div key={index} className="space-y-1">
@@ -101,14 +138,14 @@ export default function ModuleNavigator({
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                          isCompleted
+                          moduleCompleted
                             ? "bg-emerald-100 text-emerald-600"
                             : isActive
                             ? "bg-blue-100 text-blue-600"
                             : "bg-gray-100 text-gray-500"
                         }`}
                       >
-                        {isCompleted ? (
+                        {moduleCompleted ? (
                           <FiCheck className="w-4 h-4" />
                         ) : (
                           index + 1
@@ -136,7 +173,7 @@ export default function ModuleNavigator({
                           onToggleComplete(index);
                         }}
                         className={`p-1 rounded-full transition-colors ${
-                          isCompleted
+                          moduleCompleted
                             ? "text-emerald-600 hover:bg-emerald-100"
                             : "text-gray-400 hover:bg-gray-100"
                         }`}

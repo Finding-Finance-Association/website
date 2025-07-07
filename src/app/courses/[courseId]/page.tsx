@@ -1,10 +1,10 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { getCourseById } from "@/lib/mockData";
+
 import { useUser } from "@/lib/useUser";
 import { useCourseProgressStore } from "@/stores/courseProgressStore";
 import { useUIStore } from "@/stores/uiStore";
-import { useCourseProgress } from "@/hooks/useCourseProgressSync";
+
 import ModuleList from "@/components/ModuleList";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
@@ -76,17 +76,17 @@ export default function CourseDetailsPage() {
     setActiveModule: setActiveModuleStore,
     setActiveTab: setActiveTabStore,
     toggleModuleCompletion: toggleModuleCompletionStore,
-    setUserInput: setUserInputStore,
+
     getCompletedModules,
     getActiveModule,
     getActiveTab,
-    getUserInput,
+
     getProgressPercentage,
   } = useCourseProgressStore();
 
   const {
     setSidebarOpen,
-    toggleSidebar,
+
     setLoading: setLoadingStore,
     getSidebarOpen,
     getLoading,
@@ -100,7 +100,7 @@ export default function CourseDetailsPage() {
   const loading = getLoading(`course-${courseId}`);
 
   // Use the sync hook for this course
-  const { syncProgress } = useCourseProgress(courseId);
+
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -123,13 +123,7 @@ export default function CourseDetailsPage() {
     fetchModules();
   }, [courseId]);
 
-  // Function to handle the textarea input change
-  const handleInputChange = (
-    blockId: string,
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setUserInputStore(courseId, blockId, e.target.value);
-  };
+
 
   // Check enrollment status when course loads or enrollment changes
   useEffect(() => {
@@ -243,6 +237,7 @@ export default function CourseDetailsPage() {
                   toggleModuleCompletion={(moduleIndex) => toggleModuleCompletionStore(courseId, moduleIndex)}
                   quizData={course.quizzes}
                   isEnrolled={enrolled}
+                  courseId={courseId}
                 />
               </div>
             </div>

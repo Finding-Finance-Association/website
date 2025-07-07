@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -10,6 +10,7 @@ import {
   FiTarget,
 } from "react-icons/fi";
 import QuizComponent from "@/components/QuizComponent";
+import { useCourseProgressStore } from "@/stores/courseProgressStore";
 
 interface ContentBlock {
   id: string;
@@ -19,6 +20,7 @@ interface ContentBlock {
   html?: string;
   markdown?: string;
   text?: string;
+  content?: string; // For Firebase compatibility
   items?: string[];
   order?: number;
 }
@@ -40,6 +42,7 @@ interface ModuleContentProps {
   toggleModuleCompletion: (i: number) => void;
   quizData?: any[]; // optional if quiz exists
   isEnrolled?: boolean;
+  courseId: string; // Add courseId for Zustand store
 }
 
 export default function ModuleContent({
@@ -52,17 +55,16 @@ export default function ModuleContent({
   toggleModuleCompletion,
   quizData = [],
   isEnrolled = true,
+  courseId,
 }: ModuleContentProps) {
-  const [userInput, setUserInput] = useState<Record<string, string>>({});
+  // Use Zustand store for user inputs instead of local state
+  const { getUserInput, setUserInput } = useCourseProgressStore();
 
   const handleInputChange = (
     blockId: string,
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setUserInput((prev) => ({
-      ...prev,
-      [blockId]: e.target.value,
-    }));
+    setUserInput(courseId, blockId, e.target.value);
   };
 
   return (
@@ -98,6 +100,7 @@ export default function ModuleContent({
           {/* Lesson Content (preserved + modularized logic) */}
           <div className="space-y-6">
             {currentModule?.contentBlocks?.map((block, idx, arr) => {
+              console.log("block : ", block);
               if (
                 block.type === "markdown" &&
                 arr[idx + 1]?.type === "list"
@@ -227,19 +230,25 @@ export default function ModuleContent({
                   );
 
                 case "text":
+                  // Get content from text field, content field, or html field (for Firebase compatibility)
+                  const textContent = block.text || block.content || block.html || "";
+                  // console.log(textContent);
+
                   return (
                     <div
                       key={block.id}
                       className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
                     >
-                      <div
-                        className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4"
-                        dangerouslySetInnerHTML={{ __html: block.html ?? "" }}
-                      />
+                      {textContent && (
+                        <div
+                          className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-h3:text-xl prose-h3:font-semibold prose-h3:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4"
+                          dangerouslySetInnerHTML={{ __html: textContent }}
+                        />
+                      )}
                       <textarea
                         className="w-full border mt-4 border-gray-300 p-3 rounded-md h-40 resize-y"
                         placeholder="Write your notes here..."
-                        value={userInput[block.id] || ""}
+                        value={getUserInput(courseId, block.id)}
                         onChange={(e) => handleInputChange(block.id, e)}
                       />
                     </div>

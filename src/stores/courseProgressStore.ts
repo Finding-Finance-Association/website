@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useUserStore } from "./userStore";
 
@@ -68,8 +68,18 @@ export const useCourseProgressStore = create<CourseProgressState>()(
 
       toggleModuleCompletion: (courseId, moduleIndex) => {
         set((state) => {
-          const currentCompleted = state.completedModules[courseId] || new Set();
-          const newCompleted = new Set(currentCompleted);
+          const currentCompleted = state.completedModules[courseId];
+
+          // Safely create a new Set from current data
+          let newCompleted: Set<number>;
+          if (currentCompleted instanceof Set) {
+            newCompleted = new Set(currentCompleted);
+          } else if (Array.isArray(currentCompleted)) {
+            newCompleted = new Set(currentCompleted);
+          } else {
+            // Handle case where it's an empty object or other non-iterable
+            newCompleted = new Set();
+          }
 
           if (newCompleted.has(moduleIndex)) {
             newCompleted.delete(moduleIndex);
@@ -199,7 +209,30 @@ export const useCourseProgressStore = create<CourseProgressState>()(
       // Getters
       getCompletedModules: (courseId) => {
         const state = get();
-        return state.completedModules[courseId] || new Set();
+        // console.log("Store state:", state);
+        // console.log("courseId:", courseId);
+        // console.log("state.completedModules:", state.completedModules);
+        const completed = state.completedModules[courseId];
+        // console.log("completed for courseId:", completed);
+
+        // Handle different data types safely
+        if (completed instanceof Set) {
+          return completed;
+        } else if (Array.isArray(completed)) {
+          // Convert array to Set and update store
+          const newSet = new Set<number>(completed);
+          set((currentState) => ({
+            ...currentState,
+            completedModules: {
+              ...currentState.completedModules,
+              [courseId]: newSet,
+            },
+          }));
+          return newSet;
+        } else {
+          // Handle case where it's undefined, null, or an object
+          return new Set<number>();
+        }
       },
 
       getActiveModule: (courseId) => {
@@ -218,8 +251,7 @@ export const useCourseProgressStore = create<CourseProgressState>()(
       },
 
       getProgressPercentage: (courseId, totalModules) => {
-        const state = get();
-        const completed = state.completedModules[courseId] || new Set();
+        const completed = get().getCompletedModules(courseId);
         return totalModules > 0 ? Math.round((completed.size / totalModules) * 100) : 0;
       },
     }),
