@@ -8,7 +8,7 @@ import { ChevronRight, BookOpen } from "lucide-react"
 
 export default function Title() {
   return (
-    <section id="title" className="w-full h-screen overflow-hidden flex items-center bg-white">
+    <section id="title" className="w-full h-screen overflow-hidden flex items-center bg-gray-100">
       <motion.div
         className="absolute inset-0 bg-gradient-to-br from-green-700 via-green-400 to-blue-700"
         style={{

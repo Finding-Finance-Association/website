@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function About() {
   return (
-    <section id="about" className="bg-slate-100 py-20 w-full flex justify-center">
+    <section id="about" className="bg-slate-100 pb-20 pt-10 w-full flex justify-center">
       <div className="w-5/6 flex flex-col items-center space-y-10">
         <motion.div
           className="text-center space-y-6"
