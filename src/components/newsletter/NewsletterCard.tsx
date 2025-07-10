@@ -14,7 +14,7 @@ export default function NewsletterCard({ newsletter }: { newsletter: Newsletter 
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
-      className="min-w-56 group relative bg-white rounded-xl shadow-lg overflow-hidden transition h-full flex flex-col"
+      className="group relative bg-white rounded-xl shadow-lg overflow-hidden transition h-full flex flex-col"
     >
       {/* <div className="relative aspect-[16/10] overflow-hidden">
         <Image
