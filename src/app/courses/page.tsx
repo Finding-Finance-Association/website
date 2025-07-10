@@ -91,7 +91,7 @@ export default function CoursesPage() {
         />
 
         {/* Search and Filter Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
+        <section className="w-5/6 mx-auto pt-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -148,7 +148,7 @@ export default function CoursesPage() {
 
         {/* Courses Grid */}
         {showCourses && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16">
+          <section className="w-5/6 mx-auto py-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${search}`}
@@ -168,15 +168,15 @@ export default function CoursesPage() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="col-span-full flex flex-col items-center justify-center py-16 text-center"
+                    className="col-span-full space-y-4 flex flex-col items-center justify-center py-10 text-center"
                   >
-                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
                       <FiSearch className="w-12 h-12 text-gray-400" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-2xl font-semibold text-slate-700">
                       No courses found
                     </h3>
-                    <p className="text-gray-600 mb-6 max-w-md">
+                    <p className="text-slate-400 w-2/3 mx-auto">
                       We couldn&apos;t find any courses matching your search
                       criteria. Try adjusting your filters or search terms.
                     </p>

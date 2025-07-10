@@ -56,9 +56,9 @@ export default function Header() {
   }, []);
 
   const navLinks = [
+    { href: "/courses", label: "Courses", highlighted: true },
     { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
-    { href: "/courses", label: "Courses", highlighted: true },
     { href: "/newsletters", label: "Newsletters" },
   ];
 
