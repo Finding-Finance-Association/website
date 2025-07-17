@@ -20,6 +20,8 @@ interface CourseProgressState {
   isLoading: boolean;
   lastSyncTime: Record<string, number>;
 
+  resetStore: () => void;
+
   // Actions
   setActiveModule: (courseId: string, moduleIndex: number) => void;
   setActiveTab: (courseId: string, tab: "lesson" | "quiz") => void;
@@ -195,6 +197,23 @@ export const useCourseProgressStore = create<CourseProgressState>()(
         }
       },
 
+      resetStore: () => {
+  set({
+    completedModules: {},
+    activeModule: {},
+    activeTab: {},
+    userInputs: {},
+    isLoading: false,
+    lastSyncTime: {},
+  });
+
+  // Clear from localStorage
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("course-progress-storage");
+  }
+},
+
+
       syncAllProgress: async (userId) => {
         if (!userId) return;
 
@@ -207,33 +226,19 @@ export const useCourseProgressStore = create<CourseProgressState>()(
       },
 
       // Getters
-      getCompletedModules: (courseId) => {
-        const state = get();
-        // console.log("Store state:", state);
-        // console.log("courseId:", courseId);
-        // console.log("state.completedModules:", state.completedModules);
-        const completed = state.completedModules[courseId];
-        // console.log("completed for courseId:", completed);
+getCompletedModules: (courseId) => {
+  const state = get();
+  const completed = state.completedModules[courseId];
 
-        // Handle different data types safely
-        if (completed instanceof Set) {
-          return completed;
-        } else if (Array.isArray(completed)) {
-          // Convert array to Set and update store
-          const newSet = new Set<number>(completed);
-          set((currentState) => ({
-            ...currentState,
-            completedModules: {
-              ...currentState.completedModules,
-              [courseId]: newSet,
-            },
-          }));
-          return newSet;
-        } else {
-          // Handle case where it's undefined, null, or an object
-          return new Set<number>();
-        }
-      },
+  // Safely return a Set without modifying store state
+  if (completed instanceof Set) {
+    return completed;
+  } else if (Array.isArray(completed)) {
+    return new Set<number>(completed);
+  } else {
+    return new Set<number>();
+  }
+},
 
       getActiveModule: (courseId) => {
         const state = get();
@@ -258,10 +263,16 @@ export const useCourseProgressStore = create<CourseProgressState>()(
     {
       name: "course-progress-storage", // localStorage key
       // Only persist certain fields
-      partialize: (state) => ({
-        completedModules: state.completedModules,
-        userInputs: state.userInputs,
-      }),
+partialize: (state) => ({
+  completedModules: Object.fromEntries(
+    Object.entries(state.completedModules).map(([courseId, set]) => [
+      courseId,
+      Array.from(set),
+    ])
+  ),
+  userInputs: state.userInputs,
+}),
+
     }
   )
 );

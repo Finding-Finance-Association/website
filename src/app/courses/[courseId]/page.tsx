@@ -124,6 +124,12 @@ export default function CourseDetailsPage() {
     fetchModules();
   }, [courseId]);
 
+  useEffect(()=>{
+    if(user?.uid && courseId){
+      useCourseProgressStore.getState().loadFromFirebase(user.uid, courseId)
+    }
+  },[user?.uid, courseId])
+
 
 
   // Check enrollment status when course loads or enrollment changes
