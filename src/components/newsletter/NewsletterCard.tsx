@@ -26,6 +26,7 @@ export default function NewsletterCard({ newsletter }: { newsletter: Newsletter 
           priority
         />
       </div> */}
+      
 
       <div className="p-5 flex flex-col flex-1">
         <h2 className="text-lg font-bold text-gray-800">
