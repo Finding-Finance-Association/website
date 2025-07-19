@@ -82,7 +82,14 @@ export default function Newsletter() {
               Subscribe
             </motion.button>
             {message && (
-              <p>{message}</p>
+              <p
+                className={`text-sm font-medium ${
+                  messageType === 'success' ? 'text-green-700' : 'text-red-700'
+                }`}
+                role="alert"
+              >
+                {message}
+              </p>
             )}
 
             <p className="text-sm text-gray-500">
