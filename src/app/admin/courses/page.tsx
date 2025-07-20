@@ -1,5 +1,6 @@
 "use client";
 
+import AdminLayout from "@/components/admin/AdminLayout";
 import { db } from "@/lib/firebase";
 import {
   addDoc,
@@ -99,6 +100,10 @@ export default function CoursesAdminPage() {
   }, []);
 
   return (
+    <AdminLayout
+      pageTitle="Course Management"
+      pageDescription="Create, edit, and manage all your courses from this central dashboard."
+    >
     <div
       style={{
         padding: "2rem",
@@ -229,5 +234,6 @@ export default function CoursesAdminPage() {
         ))}
       </ul>
     </div>
+    </AdminLayout>  
   );
 }

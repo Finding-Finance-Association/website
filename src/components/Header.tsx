@@ -21,7 +21,10 @@ export default function Header() {
   useEffect(() => {
     const originalWarn = console.warn;
     console.warn = (...args) => {
-      if (typeof args[0] === 'string' && args[0].includes('Skipping auto-scroll behavior')) {
+      if (
+        typeof args[0] === "string" &&
+        args[0].includes("Skipping auto-scroll behavior")
+      ) {
         return;
       }
       originalWarn.apply(console, args);
@@ -197,12 +200,14 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center space-x-3">
-            <Link
-              href="/login"
-              className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors duration-300"
-            >
-              Login
-            </Link>
+            {!user && (
+              <Link
+                href="/login"
+                className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors duration-300"
+              >
+                Login
+              </Link>
+            )}
             <motion.button
               onClick={toggleMobileMenu}
               className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-300"
@@ -284,14 +289,29 @@ export default function Header() {
                   transition={{ duration: 0.3, delay: 0.4 }}
                   className="pt-4 border-t border-gray-100 mx-2"
                 >
-                  <Link
-                    href="/register"
-                    aria-label="Sign up"
-                    className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
+                  {user ? (
+                    <>
+                      <Link
+                        href="/"
+                        aria-label="Sign up"
+                        className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
+                        onClick={logout}
+                      >
+                        Logout
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/register"
+                        aria-label="Sign up"
+                        className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
                 </motion.div>
               </div>
             </motion.div>

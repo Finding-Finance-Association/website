@@ -31,22 +31,11 @@ export default function AdminNavbar({
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link href="/admin/courses" className="flex items-center space-x-2">
+            <Link href="/admin" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <FiBook className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-900">Course Admin</span>
-            </Link>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/admin/courses"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-            >
-              <FiHome className="w-4 h-4 mr-2" />
-              All Courses
             </Link>
           </div>
         </div>
