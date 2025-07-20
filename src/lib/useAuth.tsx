@@ -13,6 +13,7 @@ import { auth, db } from "@/lib/firebase";
 import { toast } from "react-hot-toast";
 import { useUserStore } from "@/stores/userStore";
 import { useMemo } from "react";
+import { useCourseProgressStore } from "@/stores/courseProgressStore";
 
 type UserData = {
   uid: string;
@@ -75,6 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
     toast.success("Logged out successfully!");
     clearUserStore();
+    
+
+useCourseProgressStore.getState().resetStore();
+
   };
 
   const value = useMemo(

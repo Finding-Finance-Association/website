@@ -1,17 +1,44 @@
 "use client"
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail } from 'lucide-react';
+import type { FormEvent } from 'react';
+
 
 export default function Newsletter() {
-  const [email, setEmail] = useState("");
-  
-  const handleNewsletterSubmit = () => {
-    // e.preventDefault();
-    // Newsletter signup logic here
-    console.log("Newsletter signup:", email);
-    setEmail("");
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Successfully subscribed!');
+      } else {
+        setMessage(data.error);
+      }
+    } catch (error: unknown) {
+      console.error(error);
+
+      if (error instanceof Error) {
+        setMessage(error.message);
+      } else {
+        setMessage('An unexpected error occurred. Please try again later.');
+      }
+    } 
   };
 
   return (
@@ -33,29 +60,42 @@ export default function Newsletter() {
             opportunities delivered to your inbox.
           </p>
 
-          <div className="max-w-md mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
+          <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
+            <div className="flex flex-col sm:flex-row">
               <input
                 type="email"
+                id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="Enter your email address"
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
               />
-              <motion.button
-                onClick={handleNewsletterSubmit}
-                className="bg-green-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors duration-200 shadow-md hover:shadow-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Subscribe
-              </motion.button>
             </div>
-          </div>
+           
+            <motion.button
+              type="submit"
+              className="bg-green-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors duration-200 shadow-md hover:shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Subscribe
+            </motion.button>
+            {message && (
+              <p
+                className={`text-sm font-medium ${
+                  messageType === 'success' ? 'text-green-700' : 'text-red-700'
+                }`}
+                role="alert"
+              >
+                {message}
+              </p>
+            )}
 
-          <p className="text-sm text-gray-500 mt-4">
-            We respect your privacy. Unsubscribe at any time.
-          </p>
+            <p className="text-sm text-gray-500">
+              We respect your privacy. Unsubscribe at any time.
+            </p>
+          </form>
         </div>
       </motion.div>
     </section>
