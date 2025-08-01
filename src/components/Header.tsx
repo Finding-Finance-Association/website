@@ -5,10 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import useAuth from "@/lib/useAuth";
 import { usePathname } from "next/navigation";
+import { checkAdminStatus } from "@/lib/admin-auth";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, loading, logout } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -64,6 +69,29 @@ export default function Header() {
     { href: "/events", label: "Events" },
     { href: "/newsletters", label: "Newsletters" },
   ];
+
+  // Listen for Firebase auth state changes to get the actual Firebase User object
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setFirebaseUser(firebaseUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Check admin status using the Firebase User object
+  useEffect(() => {
+    async function checkAdmin() {
+      if (firebaseUser) {
+        const adminStatus = await checkAdminStatus(firebaseUser);
+        setIsAdmin(adminStatus);
+        // console.log(`admin check complete → user is ${adminStatus ? "admin" : "not admin"}`);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    checkAdmin();
+  }, [firebaseUser]);
 
   if (loading) return null;
 
@@ -151,6 +179,14 @@ export default function Header() {
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
                 <div className="flex items-center space-x-4">
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="text-red-800 bg-amber-400 opacity-65 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:opacity-100"
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
                   <span className="text-gray-700 font-medium">
                     {user.username}
                   </span>

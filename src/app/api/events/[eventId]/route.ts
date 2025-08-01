@@ -43,6 +43,17 @@ export async function PUT(
   { params }: { params: { eventId: string } }
 ) {
   try {
+    // Check admin authentication
+    const { getUserFromRequest } = await import('@/lib/auth');
+    const user = await getUserFromRequest(request);
+
+    if (!user?.isAdmin) {
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 }
+      );
+    }
+
     const eventData = await request.json();
     const eventRef = doc(db, "events", params.eventId);
 
@@ -73,6 +84,17 @@ export async function DELETE(
   { params }: { params: { eventId: string } }
 ) {
   try {
+    // Check admin authentication
+    const { getUserFromRequest } = await import('@/lib/auth');
+    const user = await getUserFromRequest(request);
+
+    if (!user?.isAdmin) {
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 }
+      );
+    }
+
     const eventRef = doc(db, "events", params.eventId);
     await deleteDoc(eventRef);
 
