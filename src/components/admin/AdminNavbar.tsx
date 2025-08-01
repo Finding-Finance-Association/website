@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiBook, FiLayers, FiFileText, FiChevronRight } from "react-icons/fi";
+import {
+  FiHome,
+  FiBook,
+  FiLayers,
+  FiFileText,
+  FiChevronRight,
+} from "react-icons/fi";
 
 interface AdminNavbarProps {
   courseTitle?: string;
@@ -11,18 +17,19 @@ interface AdminNavbarProps {
   moduleId?: string;
 }
 
-export default function AdminNavbar({ 
-  courseTitle, 
-  moduleTitle, 
-  courseId, 
-  moduleId 
+export default function AdminNavbar({
+  courseTitle,
+  moduleTitle,
+  courseId,
+  moduleId,
 }: AdminNavbarProps) {
   const pathname = usePathname();
 
   // Determine current page for highlighting
   const isCoursesPage = pathname === "/admin/courses";
   const isCourseDetailPage = pathname === `/admin/courses/${courseId}`;
-  const isModuleDetailPage = pathname === `/admin/courses/${courseId}/modules/${moduleId}`;
+  const isModuleDetailPage =
+    pathname === `/admin/courses/${courseId}/modules/${moduleId}`;
 
   return (
     <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -30,12 +37,20 @@ export default function AdminNavbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <Link href="/admin" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <FiBook className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Course Admin</span>
+              <span className="text-xl font-bold text-gray-900">
+                Course Admin
+              </span>
+            </Link>
+            <Link
+              href="/"
+              className="text-red-800 bg-amber-400 opacity-65 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:opacity-100"
+            >
+              Home Page
             </Link>
           </div>
         </div>
