@@ -36,7 +36,7 @@ export async function GET() {
     // Add cache headers for better performance
     return NextResponse.json(events, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30',
       },
     });
   } catch (error) {
@@ -51,6 +51,17 @@ export async function GET() {
 // POST - Create new event (Admin only)
 export async function POST(request: NextRequest) {
   try {
+    // Check admin authentication
+    const { getUserFromRequest } = await import('@/lib/auth');
+    const user = await getUserFromRequest(request);
+
+    if (!user?.isAdmin) {
+      return NextResponse.json(
+        { error: "Admin access required" },
+        { status: 403 }
+      );
+    }
+
     const eventData = await request.json();
 
     // Add timestamps

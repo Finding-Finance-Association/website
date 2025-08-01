@@ -771,7 +771,7 @@ export default function ModuleDetailPage() {
                     style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc", width: "200px" }}
                   >
                     <option value="mcq">Multiple Choice</option>
-                    <option value="text">Text Answer</option>
+                    {/* <option value="text">Text Answer</option> */}
                   </select>
                 </div>
 

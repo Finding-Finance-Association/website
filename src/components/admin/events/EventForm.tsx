@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { Event } from "@/app/api/events/route";
-import { X, Calendar, Clock, MapPin, Users, DollarSign, Tag } from "lucide-react";
+import {
+  X,
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  DollarSign,
+  Tag,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 interface EventFormProps {
@@ -12,36 +20,37 @@ interface EventFormProps {
 }
 
 const eventTypes = [
-  { value: 'workshop', label: 'Workshop' },
-  { value: 'seminar', label: 'Seminar' },
-  { value: 'conference', label: 'Conference' },
-  { value: 'networking', label: 'Networking' },
-  { value: 'training', label: 'Training' },
+  { value: "workshop", label: "Workshop" },
+  { value: "seminar", label: "Seminar" },
+  { value: "conference", label: "Conference" },
+  { value: "networking", label: "Networking" },
+  { value: "training", label: "Training" },
 ];
 
 const colorOptions = [
-  { value: 'bg-blue-500', label: 'Blue', preview: 'bg-blue-500' },
-  { value: 'bg-green-500', label: 'Green', preview: 'bg-green-500' },
-  { value: 'bg-purple-500', label: 'Purple', preview: 'bg-purple-500' },
-  { value: 'bg-red-500', label: 'Red', preview: 'bg-red-500' },
-  { value: 'bg-yellow-500', label: 'Yellow', preview: 'bg-yellow-500' },
-  { value: 'bg-indigo-500', label: 'Indigo', preview: 'bg-indigo-500' },
-  { value: 'bg-pink-500', label: 'Pink', preview: 'bg-pink-500' },
-  { value: 'bg-teal-500', label: 'Teal', preview: 'bg-teal-500' },
+  { value: "bg-blue-500", label: "Blue", preview: "bg-blue-500" },
+  { value: "bg-green-500", label: "Green", preview: "bg-green-500" },
+  { value: "bg-purple-500", label: "Purple", preview: "bg-purple-500" },
+  { value: "bg-red-500", label: "Red", preview: "bg-red-500" },
+  { value: "bg-yellow-500", label: "Yellow", preview: "bg-yellow-500" },
+  { value: "bg-indigo-500", label: "Indigo", preview: "bg-indigo-500" },
+  { value: "bg-pink-500", label: "Pink", preview: "bg-pink-500" },
+  { value: "bg-teal-500", label: "Teal", preview: "bg-teal-500" },
 ];
 
 export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    endTime: '',
-    location: '',
-    category: '',
-    type: 'workshop' as Event['type'],
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+    endTime: "",
+    location: "",
+    category: "",
+    type: "workshop" as Event["type"],
     price: 0,
-    color: 'bg-blue-500',
+    color: "bg-blue-500",
+    registrationLink: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -51,53 +60,66 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
   useEffect(() => {
     if (event) {
       setFormData({
-        title: event.title || '',
-        description: event.description || '',
-        date: event.date || '',
-        time: event.time || '',
-        endTime: event.endTime || '',
-        location: event.location || '',
-        category: event.category || '',
-        type: event.type || 'workshop',
+        title: event.title || "",
+        description: event.description || "",
+        date: event.date || "",
+        time: event.time || "",
+        endTime: event.endTime || "",
+        location: event.location || "",
+        category: event.category || "",
+        type: event.type || "workshop",
         price: event.price || 0,
-        color: event.color || 'bg-blue-500',
+        color: event.color || "bg-blue-500",
+        registrationLink: event.registrationLink || "",
       });
     }
   }, [event]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value, type } = e.target;
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked 
-              : type === 'number' ? Number(value) 
-              : value
+      [name]:
+        type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : type === "number"
+          ? Number(value)
+          : value,
     }));
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-
-    toast.success("Event saved successfully!");
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.date) newErrors.date = 'Date is required';
-    if (!formData.time) newErrors.time = 'Start time is required';
-    if (!formData.endTime) newErrors.endTime = 'End time is required';
-    if (!formData.location.trim()) newErrors.location = 'Location is required';
-    if (!formData.category.trim()) newErrors.category = 'Category is required';
-    if (formData.price < 0) newErrors.price = 'Price cannot be negative';
+    if (!formData.title.trim()) newErrors.title = "Title is required";
+    if (!formData.description.trim())
+      newErrors.description = "Description is required";
+    if (!formData.date) newErrors.date = "Date is required";
+    if (!formData.time) newErrors.time = "Start time is required";
+    if (!formData.endTime) newErrors.endTime = "End time is required";
+    if (!formData.location.trim()) newErrors.location = "Location is required";
+    if (!formData.category.trim()) newErrors.category = "Category is required";
+    if (formData.price < 0) newErrors.price = "Price cannot be negative";
+    if (!formData.registrationLink.trim())
+      newErrors.registrationLink = "Registration link is required";
 
     // Validate time logic
-    if (formData.time && formData.endTime && formData.time >= formData.endTime) {
-      newErrors.endTime = 'End time must be after start time';
+    if (
+      formData.time &&
+      formData.endTime &&
+      formData.time >= formData.endTime
+    ) {
+      newErrors.endTime = "End time must be after start time";
     }
 
     // Validate date is not in the past (for new events)
@@ -105,9 +127,9 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
       const selectedDate = new Date(formData.date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       if (selectedDate <= today) {
-        newErrors.date = 'Event date cannot be in the past';
+        newErrors.date = "Event date cannot be in the past";
       }
     }
 
@@ -117,14 +139,16 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
       await onSave(formData);
+
+      toast.success("Event saved successfully!");
     } catch (error) {
-      console.error('Error saving event:', error);
+      console.error("Error saving event:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -137,7 +161,7 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">
-              {event ? 'Edit Event' : 'Create New Event'}
+              {event ? "Edit Event" : "Create New Event"}
             </h2>
             <button
               onClick={onCancel}
@@ -164,11 +188,13 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   value={formData.title}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors.title ? 'border-red-300' : 'border-gray-300'
+                    errors.title ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter event title"
                 />
-                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                )}
               </div>
 
               {/* Description */}
@@ -182,11 +208,15 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   onChange={handleInputChange}
                   rows={4}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors.description ? 'border-red-300' : 'border-gray-300'
+                    errors.description ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Describe your event"
                 />
-                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                {errors.description && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.description}
+                  </p>
+                )}
               </div>
 
               {/* Date */}
@@ -201,10 +231,12 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   value={formData.date}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors.date ? 'border-red-300' : 'border-gray-300'
+                    errors.date ? "border-red-300" : "border-gray-300"
                   }`}
                 />
-                {errors.date && <p className="mt-1 text-sm text-red-600">{errors.date}</p>}
+                {errors.date && (
+                  <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+                )}
               </div>
 
               {/* Time */}
@@ -220,12 +252,14 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                     value={formData.time}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                      errors.time ? 'border-red-300' : 'border-gray-300'
+                      errors.time ? "border-red-300" : "border-gray-300"
                     }`}
                   />
-                  {errors.time && <p className="mt-1 text-sm text-red-600">{errors.time}</p>}
+                  {errors.time && (
+                    <p className="mt-1 text-sm text-red-600">{errors.time}</p>
+                  )}
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     End Time *
@@ -236,11 +270,39 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                     value={formData.endTime}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                      errors.endTime ? 'border-red-300' : 'border-gray-300'
+                      errors.endTime ? "border-red-300" : "border-gray-300"
                     }`}
                   />
-                  {errors.endTime && <p className="mt-1 text-sm text-red-600">{errors.endTime}</p>}
+                  {errors.endTime && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.endTime}
+                    </p>
+                  )}
                 </div>
+              </div>
+
+              {/* Registration Link */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Registration Link *
+                </label>
+                <input
+                  type="text"
+                  name="registrationLink"
+                  value={formData.registrationLink}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    errors.registrationLink
+                      ? "border-red-300"
+                      : "border-gray-300"
+                  }`}
+                  placeholder="Event registration link"
+                />
+                {errors.registrationLink && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.registrationLink}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -258,11 +320,13 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   value={formData.location}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors.location ? 'border-red-300' : 'border-gray-300'
+                    errors.location ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Event location or online link"
                 />
-                {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
+                {errors.location && (
+                  <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+                )}
               </div>
 
               {/* Category */}
@@ -277,11 +341,13 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   value={formData.category}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors.category ? 'border-red-300' : 'border-gray-300'
+                    errors.category ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="e.g., Technology, Business, Health"
                 />
-                {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
+                {errors.category && (
+                  <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+                )}
               </div>
 
               {/* Type */}
@@ -295,7 +361,7 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 >
-                  {eventTypes.map(type => (
+                  {eventTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
                     </option>
@@ -317,11 +383,13 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   min="0"
                   step="0.01"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors.price ? 'border-red-300' : 'border-gray-300'
+                    errors.price ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="0.00 for free events"
                 />
-                {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price}</p>}
+                {errors.price && (
+                  <p className="mt-1 text-sm text-red-600">{errors.price}</p>
+                )}
               </div>
 
               {/* Color */}
@@ -330,19 +398,25 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
                   Event Color
                 </label>
                 <div className="grid grid-cols-4 gap-2">
-                  {colorOptions.map(color => (
+                  {colorOptions.map((color) => (
                     <button
                       key={color.value}
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, color: color.value }))}
+                      onClick={() =>
+                        setFormData((prev) => ({ ...prev, color: color.value }))
+                      }
                       className={`p-3 rounded-lg border-2 transition-colors ${
-                        formData.color === color.value 
-                          ? 'border-gray-900' 
-                          : 'border-gray-200 hover:border-gray-300'
+                        formData.color === color.value
+                          ? "border-gray-900"
+                          : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <div className={`w-full h-4 rounded ${color.preview}`}></div>
-                      <span className="text-xs text-gray-600 mt-1 block">{color.label}</span>
+                      <div
+                        className={`w-full h-4 rounded ${color.preview}`}
+                      ></div>
+                      <span className="text-xs text-gray-600 mt-1 block">
+                        {color.label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -371,10 +445,12 @@ export default function EventForm({ event, onSave, onCancel }: EventFormProps) {
               {isSubmitting ? (
                 <div className="flex items-center justify-center">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  {event ? 'Updating...' : 'Creating...'}
+                  {event ? "Updating..." : "Creating..."}
                 </div>
+              ) : event ? (
+                "Update Event"
               ) : (
-                event ? 'Update Event' : 'Create Event'
+                "Create Event"
               )}
             </button>
           </div>
