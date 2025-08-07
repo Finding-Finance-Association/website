@@ -22,6 +22,7 @@ export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showCourses, setShowCourses] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -34,6 +35,7 @@ export default function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        setLoading(true);
         const res = await fetch("/api/courses");
 
         if (!res.ok) {
@@ -45,6 +47,8 @@ export default function CoursesPage() {
         // console.log("courses data : ", data);
       } catch (error: any) {
         console.log(error.message || "Unexpected Error");
+      } finally {
+        setLoading(false);
       }
     };
     fetchCourses();
@@ -146,6 +150,12 @@ export default function CoursesPage() {
           </motion.div>
         </section>
 
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="w-8 h-8 border-4 border-emerald-500 border-dashed rounded-full animate-spin mx-auto mb-4" />
+          </div>
+        )}
+
         {/* Courses Grid */}
         {showCourses && (
           <section className="w-5/6 mx-auto py-6">
@@ -196,9 +206,8 @@ export default function CoursesPage() {
             </AnimatePresence>
           </section>
         )}
-
       </main>
-      <Footer/>
+      <Footer />
     </>
   );
 }
