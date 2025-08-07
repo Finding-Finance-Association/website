@@ -1,5 +1,4 @@
 "use client";
-import { getCourses } from "@/lib/mockData";
 import CourseCard from "@/components/CourseCard";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
@@ -9,6 +8,7 @@ import Footer from "@/components/Footer";
 import TitleCard from "@/components/TitleCard";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { LoadingPage } from "@/components/LoadingPage";
 
 type Course = {
   id: string;
@@ -26,6 +26,7 @@ export default function CoursesPage() {
   const [showCourses, setShowCourses] = useState(false);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>([])
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -65,6 +66,7 @@ export default function CoursesPage() {
     };
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setLoading(true)
       await fetchCourses();
       if(user){
         setUserLoggedIn(true);
@@ -72,6 +74,7 @@ export default function CoursesPage() {
       }else{
         setUserLoggedIn(false)
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -113,6 +116,8 @@ export default function CoursesPage() {
     },
   };
 return (
+  <>
+  {loading ? (<LoadingPage />) : (
   <>
     <Header />
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
@@ -254,6 +259,8 @@ return (
       )}
     </main>
     <Footer />
+    </>
+  )}
   </>
 );
 
