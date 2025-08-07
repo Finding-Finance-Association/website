@@ -130,6 +130,7 @@ export default function CoursesAdminPage() {
         }}
       >
         <h2 style={{ marginBottom: "0.5rem" }}>Add New Course</h2>
+        <label style={{ fontWeight: "bold" }}>Title</label>
         <input
           name="title"
           placeholder="Title"
@@ -137,6 +138,7 @@ export default function CoursesAdminPage() {
           onChange={handleChange}
           required
         />
+        <label style={{ fontWeight: "bold" }}>Description</label>
         <input
           name="description"
           placeholder="Description"
@@ -144,6 +146,7 @@ export default function CoursesAdminPage() {
           onChange={handleChange}
           required
         />
+        <label style={{ fontWeight: "bold" }}>Thumbnail</label>
         <input
           name="thumbnail"
           placeholder="Thumbnail URL"
@@ -151,6 +154,7 @@ export default function CoursesAdminPage() {
           onChange={handleChange}
           required
         />
+        <label style={{ fontWeight: "bold" }}>Category</label>
         <input
           name="category"
           placeholder="Category"
@@ -158,6 +162,7 @@ export default function CoursesAdminPage() {
           onChange={handleChange}
           required
         />
+        <label style={{ fontWeight: "bold" }}>Hours</label>
         <input
           name="hours"
           type="number"

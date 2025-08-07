@@ -39,6 +39,7 @@ export default function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        setLoading(true);
         const res = await fetch("/api/courses");
 
         if (!res.ok) {
@@ -47,9 +48,10 @@ export default function CoursesPage() {
         }
         const data = await res.json();
         setAllCourses(data);
-        // console.log("courses data : ", data);
       } catch (error: any) {
         console.log(error.message || "Unexpected Error");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -61,7 +63,7 @@ export default function CoursesPage() {
           setEnrolledCourseIds(enrolledCourseIds || []);
         }
       } catch (error) {
-        console.error("Error fetching enrolled courses:", error.message)
+        console.error("Error fetching enrolled courses:", error)
       }
     };
 
@@ -263,5 +265,4 @@ return (
   )}
   </>
 );
-
 }
