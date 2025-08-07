@@ -1,17 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { auth, googleAuth, db } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [adminError, setAdminError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error === 'admin_access_required') {
+      setAdminError('Admin access required. Please login with an admin account.');
+    }
+  }, [searchParams]);
 
   // Handle Email/Password Sign-In
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,7 +34,10 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast.success("Signed in successfully!");
-      router.push("/");
+
+      // Check for return URL
+      const returnUrl = searchParams.get('returnUrl');
+      router.push(returnUrl || "/");
     } catch (error: any) {
       toast.error(
         `Login failed: ${error.code.split("/")[1].replace(/-/g, " ")}`
@@ -44,7 +56,10 @@ export default function Login() {
       if (docSnap.exists()) {
         // User exists, proceed
         toast.success("Signed in with Google!");
-        router.push("/");
+
+        // Check for return URL
+        const returnUrl = searchParams.get('returnUrl');
+        router.push(returnUrl || "/");
       } else {
         // User doesn't exist in Firestore
         toast.error("No user found. Please sign up first.");
@@ -67,6 +82,13 @@ export default function Login() {
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
           Sign In
         </h2>
+
+        {/* Admin Error Message */}
+        {adminError && (
+          <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+            <p className="text-sm">{adminError}</p>
+          </div>
+        )}
 
         {/* Google Sign-In */}
         <button
@@ -146,5 +168,22 @@ export default function Login() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-md mx-auto w-full bg-white shadow-md rounded-lg overflow-hidden mt-12 animate-fade-in">
+        <div className="px-6 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

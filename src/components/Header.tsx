@@ -5,10 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import useAuth from "@/lib/useAuth";
 import { usePathname } from "next/navigation";
+import { checkAdminStatus } from "@/lib/admin-auth";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, loading, logout } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -21,7 +26,10 @@ export default function Header() {
   useEffect(() => {
     const originalWarn = console.warn;
     console.warn = (...args) => {
-      if (typeof args[0] === 'string' && args[0].includes('Skipping auto-scroll behavior')) {
+      if (
+        typeof args[0] === "string" &&
+        args[0].includes("Skipping auto-scroll behavior")
+      ) {
         return;
       }
       originalWarn.apply(console, args);
@@ -61,6 +69,29 @@ export default function Header() {
     { href: "/events", label: "Events" },
     { href: "/newsletters", label: "Newsletters" },
   ];
+
+  // Listen for Firebase auth state changes to get the actual Firebase User object
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setFirebaseUser(firebaseUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Check admin status using the Firebase User object
+  useEffect(() => {
+    async function checkAdmin() {
+      if (firebaseUser) {
+        const adminStatus = await checkAdminStatus(firebaseUser);
+        setIsAdmin(adminStatus);
+        // console.log(`admin check complete → user is ${adminStatus ? "admin" : "not admin"}`);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    checkAdmin();
+  }, [firebaseUser]);
 
   if (loading) return null;
 
@@ -148,6 +179,14 @@ export default function Header() {
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
                 <div className="flex items-center space-x-4">
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="text-red-800 bg-amber-400 opacity-65 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:opacity-100"
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
                   <span className="text-gray-700 font-medium">
                     {user.username}
                   </span>
@@ -197,12 +236,14 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center space-x-3">
-            <Link
-              href="/login"
-              className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors duration-300"
-            >
-              Login
-            </Link>
+            {!user && (
+              <Link
+                href="/login"
+                className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors duration-300"
+              >
+                Login
+              </Link>
+            )}
             <motion.button
               onClick={toggleMobileMenu}
               className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-300"
@@ -284,14 +325,29 @@ export default function Header() {
                   transition={{ duration: 0.3, delay: 0.4 }}
                   className="pt-4 border-t border-gray-100 mx-2"
                 >
-                  <Link
-                    href="/register"
-                    aria-label="Sign up"
-                    className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
+                  {user ? (
+                    <>
+                      <Link
+                        href="/"
+                        aria-label="Sign up"
+                        className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
+                        onClick={logout}
+                      >
+                        Logout
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/register"
+                        aria-label="Sign up"
+                        className="block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-lg font-semibold text-center shadow-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-100"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
                 </motion.div>
               </div>
             </motion.div>

@@ -14,6 +14,12 @@ export default function Newsletter() {
     e.preventDefault();
     setMessage('');
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      setMessage('Please enter a valid email address.');
+      return;
+    }
+
     try {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
@@ -28,7 +34,7 @@ export default function Newsletter() {
       if (response.ok) {
         setMessage('Successfully subscribed!');
       } else {
-        setMessage(data.error);
+        setMessage(data.error || 'Subscription failed. Please try again.');
       }
     } catch (error: unknown) {
       console.error(error);

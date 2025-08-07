@@ -1,9 +1,17 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {};
-module.exports = {
+const nextConfig: NextConfig = {
   images: {
-    domains: ["studentglobemedia.s3.us-east-2.amazonaws.com","images.ctfassets.net"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'studentglobemedia.s3.us-east-2.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.ctfassets.net',
+      },
+    ],
   },
 };
 

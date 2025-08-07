@@ -17,6 +17,7 @@ import SidebarHighlights from "@/components/course/SidebarHighlights";
 import ModuleNavigator from "@/components/course/ModuleNavigator";
 import ModuleContent from "@/components/course/ModuleContent";
 import CourseNotFound from "@/components/course/CourseNotFound";
+import { LoadingPage } from "@/components/LoadingPage";
 
 export interface Course {
   id: string;
@@ -106,6 +107,7 @@ export default function CourseDetailsPage() {
   useEffect(() => {
     const fetchModules = async () => {
       try {
+        setLoadingStore(`course-${courseId}`, true)
         const res = await fetch(`/api/courses/${courseId}`);
         if (!res.ok) {
           const errorData = await res.json();
@@ -141,14 +143,7 @@ export default function CourseDetailsPage() {
 
   if (loading) {
     return (
-      <>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <div className="w-8 h-8 border-4 border-emerald-500 border-dashed rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading course...</p>
-          </div>
-        </div>
-      </>
+      < LoadingPage />
     );
   }
 
