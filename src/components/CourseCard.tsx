@@ -1,14 +1,22 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { Course } from "@/lib/mockData";
 import { motion } from "framer-motion";
+
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  category?: string;
+  hours?: number;
+}
 
 interface Props {
   course: Course;
 }
 
-export default function CourseCard({ course }: Props) {
+export default function CourseCard({ course, enrolled }: Props & { enrolled: boolean }) {
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
@@ -39,7 +47,7 @@ export default function CourseCard({ course }: Props) {
         <div className="mt-auto">
           <Link href={`/courses/${course.id}`}>
             <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition font-medium">
-              View Course
+              {enrolled ? "Continue Learning" : "View Course"}
             </button>
           </Link>
         </div>

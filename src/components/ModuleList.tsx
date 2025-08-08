@@ -1,7 +1,30 @@
 
 "use client";
 import Link from "next/link";
-import { Module } from "@/lib/mockData";
+
+export interface ContentBlock {
+  id: string;
+  type: "text" | "markdown" | "video" | "list" | "quiz" | "quote";
+  html?: string;
+  markdown?: string;
+  url?: string;
+  title?: string;
+  src?: string;
+  alt?: string;
+  items?: string[];
+  quizId?: string;
+  text?: string;
+  order?: number;
+}
+
+export interface Module {
+  id: string;
+  title: string;
+  outcome?: string;
+  contentType?: string;
+  contentBlocks: ContentBlock[];
+  order?: number;
+}
 
 interface Props {
   courseId: string;

@@ -26,9 +26,9 @@ export default function AdminDashboard() {
       title: "Student Management",
       description: "Manage student enrollments and access",
       icon: FiUsers,
-      href: "#",
+      href: "/admin/studentManagement",
       color: "orange",
-      stats: "Coming soon"
+      stats: "Manage all students"
     },
   ];
 
