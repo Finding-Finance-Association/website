@@ -22,6 +22,11 @@ export default function Header() {
   const [isScrolledPastTitle, setIsScrolledPastTitle] = useState(false);
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
+  const isActive = (href: string) => {
+    if (!pathname) return false;
+    if(href === "/") return pathname === "/";
+    return pathname.startsWith(href)
+  }
 
   useEffect(() => {
     const originalWarn = console.warn;
@@ -64,8 +69,8 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { href: "/courses", label: "Courses", highlighted: true },
     { href: "/", label: "Home" },
+    { href: "/courses", label: "Courses" },
     { href: "/events", label: "Events" },
     { href: "/newsletters", label: "Newsletters" },
   ];
@@ -137,38 +142,36 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link, index) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                {link.highlighted ? (
-                  <motion.div
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Link
-                      href={link.href}
-                      className="bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 px-5 py-2.5 rounded-full font-semibold shadow-sm hover:shadow-md hover:from-green-100 hover:to-emerald-100 transition-all duration-300 border border-green-100"
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ) : (
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 hover:text-green-600 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-gray-50 relative group"
-                  >
-                    {link.label}
-                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-green-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                  </Link>
-                )}
-              </motion.div>
-            ))}
-          </div>
+  {navLinks.map((link, index) => (
+    <motion.div
+      key={link.href}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+    >
+      <Link
+        href={link.href}
+        aria-current={isActive(link.href) ? "page" : undefined}
+        className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 relative
+          ${isActive(link.href)
+            ? "text-green-700"
+            : "text-gray-700 hover:text-green-600 hover:bg-gray-50"
+          }`}
+      >
+        {link.label}
+
+        {isActive(link.href) && (
+          <motion.span
+            layoutId="active-underline"
+            className="absolute inset-x-0 bottom-0 h-0.5 bg-green-600"
+            transition={{ type: "spring", stiffness: 500, damping: 40 }}
+          />
+        )}
+      </Link>
+    </motion.div>
+  ))}
+</div>
+
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-3">
