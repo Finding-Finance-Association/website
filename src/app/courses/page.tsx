@@ -1,5 +1,5 @@
 "use client";
-import CourseCard from "@/components/CourseCard";
+import CourseCard, { Course } from "@/components/CourseCard";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,15 +9,6 @@ import TitleCard from "@/components/TitleCard";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { LoadingPage } from "@/components/LoadingPage";
-
-type Course = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  category?: string;
-  hours?: number;
-};
 
 export default function CoursesPage() {
   const [allCourses, setAllCourses] = useState<Course[]>([]);
@@ -192,7 +183,7 @@ return (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {myCourses.length > 0 ? (
                   myCourses.map((course) => (
-                    <CourseCard key={course.id} course={course} />
+                    <CourseCard key={course.id} course={course} enrolled={true} />
                   ))
                 ) : (
                   <p className="text-gray-500 col-span-full text-center">
@@ -225,7 +216,7 @@ return (
                 {filteredCourses.length > 0 ? (
                   filteredCourses.map((course) => (
                     <motion.div key={course.id} variants={itemVariants} layout>
-                      <CourseCard course={course} />
+                      <CourseCard course={course} enrolled={enrolledCourseIds.includes(course.id)} />
                     </motion.div>
                   ))
                 ) : (
