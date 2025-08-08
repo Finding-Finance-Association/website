@@ -238,15 +238,22 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Button */}
+
           <div className="lg:hidden flex items-center space-x-3">
-            {!user && (
-              <Link
-                href="/login"
-                className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors duration-300"
-              >
-                Login
-              </Link>
-            )}
+  {user ? (
+    // Show username if logged in
+    <span className="text-gray-700 text-sm font-medium truncate max-w-[120px]">
+      {user.username}
+    </span>
+  ) : (
+    // Show Login button if not logged in
+    <Link
+      href="/login"
+      className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors duration-300"
+    >
+      Login
+    </Link>
+  )}
             <motion.button
               onClick={toggleMobileMenu}
               className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-300"
@@ -301,15 +308,7 @@ export default function Header() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    {link.highlighted ? (
-                      <Link
-                        href={link.href}
-                        className="block bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 px-4 py-3 rounded-lg font-semibold border border-green-100 mx-2"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ) : (
+                   
                       <Link
                         href={link.href}
                         className="block text-gray-700 hover:text-green-600 hover:bg-gray-50 px-4 py-3 rounded-lg font-medium transition-all duration-300 mx-2"
@@ -317,7 +316,7 @@ export default function Header() {
                       >
                         {link.label}
                       </Link>
-                    )}
+    
                   </motion.div>
                 ))}
 
