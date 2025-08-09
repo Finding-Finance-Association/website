@@ -188,10 +188,16 @@ export default function ModuleDetailPage() {
         "quizzes"
       );
 
-      const quizData = {
-        ...quizForm,
-        options: quizForm.type === "mcq" ? quizForm.options?.filter(opt => opt.trim()) : undefined
+      const quizData: any = {
+        type: quizForm.type,
+        question: quizForm.question,
+        correctAnswer: quizForm.correctAnswer,
       };
+
+      // Only add options field for MCQ questions
+      if (quizForm.type === "mcq") {
+        quizData.options = quizForm.options?.filter(opt => opt.trim()) || [];
+      }
 
       const newQuizRef = await addDoc(quizzesRef, quizData);
       const newQuiz = { ...quizData, id: newQuizRef.id };
@@ -254,10 +260,16 @@ export default function ModuleDetailPage() {
         editingQuizId
       );
 
-      const quizData = {
-        ...quizForm,
-        options: quizForm.type === "mcq" ? quizForm.options?.filter(opt => opt.trim()) : undefined
+      const quizData: any = {
+        type: quizForm.type,
+        question: quizForm.question,
+        correctAnswer: quizForm.correctAnswer,
       };
+
+      // Only add options field for MCQ questions
+      if (quizForm.type === "mcq") {
+        quizData.options = quizForm.options?.filter(opt => opt.trim()) || [];
+      }
 
       await setDoc(quizRef, quizData);
       setQuizzes(prev => prev.map(q => q.id === editingQuizId ? { ...quizData, id: editingQuizId } : q));
@@ -771,7 +783,7 @@ export default function ModuleDetailPage() {
                     style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc", width: "200px" }}
                   >
                     <option value="mcq">Multiple Choice</option>
-                    {/* <option value="text">Text Answer</option> */}
+                    <option value="text">Text Answer</option>
                   </select>
                 </div>
 
