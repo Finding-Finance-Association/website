@@ -300,6 +300,8 @@ export default function CourseDetailPage() {
                 backgroundColor: "#f9f9f9",
               }}
             >
+              <h2 style={{ marginBottom: "0.5rem", fontWeight: "bold", fontSize: "1.5rem" }}>Edit Course</h2>
+              <label style={{ fontWeight: "bold" }}> Title</label>
               <input
                 name="title"
                 placeholder="Title"
@@ -309,6 +311,7 @@ export default function CourseDetailPage() {
                 }
                 required
               />
+              <label style={{ fontWeight: "bold" }}> Description</label>
               <textarea
                 name="description"
                 placeholder="Description"
@@ -319,6 +322,7 @@ export default function CourseDetailPage() {
                 required
                 rows={4}
               />
+              <label style={{ fontWeight: "bold" }}> Thumbnail URL</label>
               <input
                 name="thumbnail"
                 placeholder="Thumbnail URL"
@@ -328,6 +332,7 @@ export default function CourseDetailPage() {
                 }
                 required
               />
+              <label style={{ fontWeight: "bold" }}> Category</label>
               <input
                 name="category"
                 placeholder="Category"
@@ -337,6 +342,7 @@ export default function CourseDetailPage() {
                 }
                 required
               />
+              <label style={{ fontWeight: "bold" }}> Hours to complete</label>
               <input
                 name="hours"
                 type="number"
@@ -398,6 +404,7 @@ export default function CourseDetailPage() {
           backgroundColor: "#f9f9f9",
         }}
       >
+        <label style={{ fontWeight: "bold" }}>Title</label>
         <input
           name="title"
           placeholder="Module Title"
@@ -406,6 +413,7 @@ export default function CourseDetailPage() {
           required
           disabled={addingModule}
         />
+        <label style={{ fontWeight: "bold" }}>Outcome</label>
         <textarea
           name="outcome"
           placeholder="Outcome"
@@ -415,6 +423,7 @@ export default function CourseDetailPage() {
           rows={3}
           disabled={addingModule}
         />
+        <label style={{ fontWeight: "bold" }}>Order</label>
         <input
           name="order"
           type="number"
