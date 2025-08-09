@@ -91,6 +91,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       const isCorrect =
         question.type === "mcq"
           ? userAnswer === question.correctAnswer
+          : question.type === "text"
+          ? true
           : userAnswer.toLowerCase().trim() ===
             question.correctAnswer.toLowerCase().trim();
 
@@ -101,11 +103,15 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       };
     });
 
-    const score = evaluatedAnswers.filter((answer) => answer.isCorrect).length;
+    const score = evaluatedAnswers.filter(
+      (answer) =>
+        answer.isCorrect &&
+        questions.find((q) => q.id === answer.questionId)?.type !== "text"
+    ).length;
     const quizResult: QuizResult = {
       answers: evaluatedAnswers,
       score,
-      totalQuestions: questions.length,
+      totalQuestions: questions.filter((q) => q.type !== "text").length,
     };
 
     setResults(quizResult);
@@ -242,14 +248,12 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                               {result?.answer || "No answer"}
                             </span>
                           </p>
-                          {!isCorrect && (
-                            <p className="text-gray-600">
-                              Correct answer:{" "}
-                              <span className="text-green-700">
-                                {question.correctAnswer}
-                              </span>
-                            </p>
-                          )}
+                          <p className="text-gray-600">
+                            Correct answer:{" "}
+                            <span className="text-green-700">
+                              {question.correctAnswer}
+                            </span>
+                          </p>
                         </div>
                       </div>
                     </div>
