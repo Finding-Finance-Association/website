@@ -5,6 +5,7 @@
 Official website for Finding Finance Association, a 501(c)(3) nonprofit organization dedicated to guiding undergraduate students through the various career paths in finance.
 
 ## Features
+
 - Courses - Access a variety of finance-related courses.
 
 - Events: Stay updated on industry events and networking opportunities.
@@ -12,6 +13,7 @@ Official website for Finding Finance Association, a 501(c)(3) nonprofit organiza
 - Newsletters: Subscribe for the latest news and opportunities in finance.
 
 ## Technologies Used
+
 - Next.js 14
 - TypeScript
 - Firebase
@@ -19,7 +21,9 @@ Official website for Finding Finance Association, a 501(c)(3) nonprofit organiza
 - React
 
 ## Contributing
+
 Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## License
+
 MIT License
