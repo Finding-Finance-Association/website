@@ -89,9 +89,7 @@ export default function Newsletter() {
             </motion.button>
             {message && (
               <p
-                className={`text-sm font-medium ${
-                  messageType === 'success' ? 'text-green-700' : 'text-red-700'
-                }`}
+                className='text-sm font-medium text-slate-700'
                 role="alert"
               >
                 {message}
