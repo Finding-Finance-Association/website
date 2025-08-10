@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiBook, FiUsers, FiBarChart, FiSettings, FiArrowRight, FiCalendar } from "react-icons/fi";
+import { FiBook, FiArrowRight, FiCalendar } from "react-icons/fi";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 export default function AdminDashboard() {
@@ -22,14 +22,14 @@ export default function AdminDashboard() {
       color: "purple",
       stats: "Manage all events"
     },
-    {
-      title: "Student Management",
-      description: "Manage student enrollments and access",
-      icon: FiUsers,
-      href: "/admin/studentManagement",
-      color: "orange",
-      stats: "Manage all students"
-    },
+    // {
+    //   title: "Student Management",
+    //   description: "Manage student enrollments and access",
+    //   icon: FiUsers,
+    //   href: "/admin/studentManagement",
+    //   color: "orange",
+    //   stats: "Manage all students"
+    // },
   ];
 
   const getColorClasses = (color: string) => {

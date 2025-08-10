@@ -6,7 +6,6 @@ import {
   FiHome,
   FiBook,
   FiLayers,
-  FiFileText,
   FiChevronRight,
 } from "react-icons/fi";
 
