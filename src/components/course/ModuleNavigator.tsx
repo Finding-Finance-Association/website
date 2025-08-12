@@ -7,13 +7,19 @@ interface Module {
   title: string;
   outcome?: string;
   contentType?: string;
-  quizzes?: any[];
+  quizzes?: Array<{
+    id: string;
+    type: "mcq" | "text";
+    question: string;
+    options?: string[];
+    correctAnswer: string;
+  }>;
 }
 
 interface ModuleNavigatorProps {
   modules: Module[];
   activeModule: number;
-  completedModules: Set<number> | number[] | any;
+  completedModules: Set<number> | number[];
   activeTab: "lesson" | "quiz";
   sidebarOpen: boolean;
   onToggleSidebar: () => void;

@@ -39,8 +39,8 @@ export default function CoursesPage() {
         }
         const data = await res.json();
         setAllCourses(data);
-      } catch (error: any) {
-        console.log(error.message || "Unexpected Error");
+      } catch (error: unknown) {
+        console.log(error instanceof Error ? error.message : "Unexpected Error");
       } finally {
         setLoading(false);
       }
@@ -163,7 +163,7 @@ return (
               {search ? (
                 <span>
                   {filteredCourses.length} course
-                  {filteredCourses.length !== 1 ? "s" : ""} found for "{search}"
+                  {filteredCourses.length !== 1 ? "s" : ""} found for &quot;{search}&quot;
                 </span>
               ) : (
                 <span>Showing all {allCourses.length} courses</span>
@@ -187,7 +187,7 @@ return (
                   ))
                 ) : (
                   <p className="text-gray-500 col-span-full text-center">
-                    You haven't enrolled in any courses yet.
+                    You haven&apos;t enrolled in any courses yet.
                   </p>
                 )}
               </div>
@@ -232,7 +232,7 @@ return (
                       No courses found
                     </h3>
                     <p className="text-slate-400 w-2/3 mx-auto">
-                      We couldn't find any courses matching your search
+                      We couldn&apos;t find any courses matching your search
                       criteria. Try adjusting your filters or search terms.
                     </p>
                     <motion.button

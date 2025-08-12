@@ -66,7 +66,7 @@ export default function Header() {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [isLandingPage]);
 
   const navLinks = [
     { href: "/", label: "Home" },

@@ -15,7 +15,7 @@ interface Newsletter {
 }
 
 export default function NewsLetterPage() {
-  const [allNewsletters, setAllNewsletters] = useState<Newsletter[]>([]);
+  const [allNewsletters] = useState<Newsletter[]>([]);
   // const [showNewsletters, setShowNewsletters] = useState(false);
 
 

@@ -8,7 +8,7 @@ import { useCourseProgressStore } from "@/stores/courseProgressStore";
  */
 export function useCourseProgressSync() {
   const { uid, isLoggedIn } = useUser();
-  const { loadFromFirebase, syncAllProgress } = useCourseProgressStore();
+  const { syncAllProgress } = useCourseProgressStore();
 
   // Load progress from Firebase when user logs in
   useEffect(() => {

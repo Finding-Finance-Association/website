@@ -9,6 +9,7 @@ import type { FormEvent } from 'react';
 export default function Newsletter() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState<'success' | 'error'>('error');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,6 +18,7 @@ export default function Newsletter() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
       setMessage('Please enter a valid email address.');
+      setMessageType('error');
       return;
     }
 
@@ -33,16 +35,20 @@ export default function Newsletter() {
 
       if (response.ok) {
         setMessage('Successfully subscribed!');
+        setMessageType('success');
       } else {
         setMessage(data.error || 'Subscription failed. Please try again.');
+        setMessageType('error');
       }
     } catch (error: unknown) {
       console.error(error);
 
       if (error instanceof Error) {
         setMessage(error.message);
+        setMessageType('error');
       } else {
         setMessage('An unexpected error occurred. Please try again later.');
+        setMessageType('error');
       }
     } 
   };

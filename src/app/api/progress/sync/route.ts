@@ -5,7 +5,7 @@ import { getUserFromRequest, requireAuth } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const user = await getUserFromRequest(req as any);
+    const user = await getUserFromRequest(req);
     requireAuth(user);
 
     const { courseId, progressData } = await req.json();
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const user = await getUserFromRequest(req as any);
+    const user = await getUserFromRequest(req);
     requireAuth(user);
 
     const url = new URL(req.url);

@@ -5,10 +5,11 @@ import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 // GET - Fetch single event
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
-    const eventRef = doc(db, "events", params.eventId);
+    const { eventId } = await params;
+    const eventRef = doc(db, "events", eventId);
     const eventSnap = await getDoc(eventRef);
 
     if (!eventSnap.exists()) {
@@ -40,7 +41,7 @@ export async function GET(
 // PUT - Update event (Admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     // Check admin authentication
@@ -54,8 +55,9 @@ export async function PUT(
       );
     }
 
+    const { eventId } = await params;
     const eventData = await request.json();
-    const eventRef = doc(db, "events", params.eventId);
+    const eventRef = doc(db, "events", eventId);
 
     // Add updated timestamp
     const updatedEvent = {
@@ -66,7 +68,7 @@ export async function PUT(
     await updateDoc(eventRef, updatedEvent);
 
     return NextResponse.json(
-      { id: params.eventId, ...updatedEvent },
+      { id: eventId, ...updatedEvent },
       { status: 200 }
     );
   } catch (error) {
@@ -81,7 +83,7 @@ export async function PUT(
 // DELETE - Delete event (Admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     // Check admin authentication
@@ -95,7 +97,8 @@ export async function DELETE(
       );
     }
 
-    const eventRef = doc(db, "events", params.eventId);
+    const { eventId } = await params;
+    const eventRef = doc(db, "events", eventId);
     await deleteDoc(eventRef);
 
     return NextResponse.json(

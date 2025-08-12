@@ -12,7 +12,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { toast } from "react-hot-toast";
 import { useUserStore } from "@/stores/userStore";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useCourseProgressStore } from "@/stores/courseProgressStore";
 
 type UserData = {
@@ -72,15 +72,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [setUserStore, clearUserStore]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await signOut(auth);
     toast.success("Logged out successfully!");
     clearUserStore();
-    
+
 
 useCourseProgressStore.getState().resetStore();
 
-  };
+  }, [clearUserStore]);
 
   const value = useMemo(
     () => ({

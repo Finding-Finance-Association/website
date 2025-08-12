@@ -11,7 +11,7 @@ export type StudentServer = {
 
 export async function getAllStudentsServer(): Promise<StudentServer[]> {
   const snap = await adminDb.collection("users").get();
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })) as StudentServer[];
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as StudentServer));
 }
 
 export async function updateStudentServer(id: string, payload: Partial<StudentServer>) {

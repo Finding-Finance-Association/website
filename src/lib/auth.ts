@@ -1,12 +1,12 @@
-import { getAuth } from 'firebase-admin/auth';
+import { getAuth, Auth } from 'firebase-admin/auth';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { Firestore, getFirestore } from 'firebase-admin/firestore';
 
 const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",");
 
 // Initialize Firebase Admin SDK
-let adminAuth: any;
-let adminDb: any;
+let adminAuth: Auth;
+let adminDb: Firestore;
 
 try {
   if (getApps().length === 0) {
@@ -30,14 +30,14 @@ try {
 export interface AuthUser {
   uid: string;
   email: string | null;
-  claims?: any;
+  claims?: Record<string, unknown>;
   isAdmin?: boolean;
 }
 
-export async function getUserFromRequest(req: any): Promise<AuthUser | null> {
+export async function getUserFromRequest(req: Request): Promise<AuthUser | null> {
   try {
     // Get the Authorization header
-    const authHeader = req.headers?.authorization || req.headers?.Authorization;
+    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
     const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
     if (!token) {

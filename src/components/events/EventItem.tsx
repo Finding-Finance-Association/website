@@ -1,5 +1,5 @@
 import React from "react";
-import { Calendar, Clock, MapPin, Users, ArrowUpRight, DollarSign } from "lucide-react";
+import { Calendar, Clock, MapPin, ArrowUpRight, DollarSign } from "lucide-react";
 import { Event } from "@/app/api/events/route";
 import toast from "react-hot-toast";
 

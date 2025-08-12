@@ -12,7 +12,7 @@ const EventSidebar: React.FC<EventSidebarProps> = ({ upcomingEvents }) => {
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
           <h3 className="text-xl font-bold text-white">Upcoming Events</h3>
-          <p className="text-blue-100 text-sm mt-1">Don't miss these exciting opportunities</p>
+          <p className="text-blue-100 text-sm mt-1">Don&apos;t miss these exciting opportunities</p>
         </div>
         <div className="p-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -7,10 +7,17 @@ import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import QuizPreview from "@/components/admin/QuizPreview";
 
+type ContentBlockContent =
+  | { markdown: string }
+  | { title: string; url: string }
+  | { items: string[] }
+  | { text: string }
+  | string;
+
 interface ContentBlock {
   id?: string;
   type: string;
-  content: any;
+  content: ContentBlockContent;
   order: number;
 }
 
@@ -29,18 +36,27 @@ interface Question {
   correctAnswer: string;
 }
 
+interface ContentFormData {
+  markdown?: string;
+  videoTitle?: string;
+  videoUrl?: string;
+  list?: string;
+  quote?: string;
+  [key: string]: string | undefined;
+}
+
 export default function ModuleDetailPage() {
   const { courseId, moduleId } = useParams();
   const [module, setModule] = useState<Module | null>(null);
   const [courseTitle, setCourseTitle] = useState<string>("");
-  const [contentForm, setContentForm] = useState<any>({});
+  const [contentForm, setContentForm] = useState<ContentFormData>({});
   const [type, setType] = useState("text");
   const [order, setOrder] = useState(1);
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
   const [editMode, setEditMode] = useState(false);
   const [editForm, setEditForm] = useState<Module | null>(null);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
-  const [editContentForm, setEditContentForm] = useState<any>({});
+  const [editContentForm, setEditContentForm] = useState<ContentFormData>({});
   const [editType, setEditType] = useState<string>("");
 
   // Quiz management state
@@ -90,23 +106,23 @@ export default function ModuleDetailPage() {
 
   const handleContentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setContentForm((prev: any) => ({ ...prev, [name]: value }));
+    setContentForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddContent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!courseId || !moduleId) return;
 
-    const content =
+    const content: ContentBlockContent =
       type === "markdown"
-        ? { markdown: contentForm.markdown }
+        ? { markdown: contentForm.markdown || "" }
         : type === "video"
-        ? { title: contentForm.videoTitle, url: contentForm.videoUrl }
+        ? { title: contentForm.videoTitle || "", url: contentForm.videoUrl || "" }
         : type === "list"
-        ? { items: contentForm.list?.split(",").map((item: any) => item.trim()) || [] }
+        ? { items: contentForm.list?.split(",").map((item: string) => item.trim()) || [] }
         : type === "quote"
-        ? { text: contentForm.quote }
-        : { text: contentForm.text || "" };
+        ? { text: contentForm.quote || "" }
+        : contentForm.text || "";
 
     const block = { type, content, order };
 
@@ -131,16 +147,41 @@ export default function ModuleDetailPage() {
   const handleEditClick = async (block: ContentBlock) => {
     setEditingBlockId(block.id!);
     setEditType(block.type);
-    setEditContentForm(block.content);
+
+    // Convert ContentBlockContent to ContentFormData
+    const formData: ContentFormData = {};
+    if (typeof block.content === "string") {
+      formData.text = block.content;
+    } else if (typeof block.content === "object") {
+      if ("markdown" in block.content) formData.markdown = block.content.markdown;
+      if ("title" in block.content) formData.videoTitle = block.content.title;
+      if ("url" in block.content) formData.videoUrl = block.content.url;
+      if ("items" in block.content) formData.list = block.content.items.join(", ");
+      if ("text" in block.content) formData.quote = block.content.text;
+    }
+
+    setEditContentForm(formData);
     setOrder(block.order);
   };
 
   const handleEditSave = async () => {
     if (!courseId || !moduleId || !editingBlockId) return;
 
+    // Convert ContentFormData back to ContentBlockContent
+    const content: ContentBlockContent =
+      editType === "markdown"
+        ? { markdown: editContentForm.markdown || "" }
+        : editType === "video"
+        ? { title: editContentForm.videoTitle || "", url: editContentForm.videoUrl || "" }
+        : editType === "list"
+        ? { items: editContentForm.list?.split(",").map((item: string) => item.trim()) || [] }
+        : editType === "quote"
+        ? { text: editContentForm.quote || "" }
+        : editContentForm.text || "";
+
     const updatedBlock = {
       type: editType,
-      content: editContentForm,
+      content,
       order,
     };
 
@@ -187,16 +228,12 @@ export default function ModuleDetailPage() {
         "quizzes"
       );
 
-      const quizData: any = {
+      const quizData: Omit<Question, 'id'> = {
         type: quizForm.type,
         question: quizForm.question,
         correctAnswer: quizForm.correctAnswer,
+        ...(quizForm.type === "mcq" && { options: quizForm.options?.filter(opt => opt.trim()) || [] })
       };
-
-      // Only add options field for MCQ questions
-      if (quizForm.type === "mcq") {
-        quizData.options = quizForm.options?.filter(opt => opt.trim()) || [];
-      }
 
       const newQuizRef = await addDoc(quizzesRef, quizData);
       const newQuiz = { ...quizData, id: newQuizRef.id };
@@ -259,16 +296,12 @@ export default function ModuleDetailPage() {
         editingQuizId
       );
 
-      const quizData: any = {
+      const quizData: Omit<Question, 'id'> = {
         type: quizForm.type,
         question: quizForm.question,
         correctAnswer: quizForm.correctAnswer,
+        ...(quizForm.type === "mcq" && { options: quizForm.options?.filter(opt => opt.trim()) || [] })
       };
-
-      // Only add options field for MCQ questions
-      if (quizForm.type === "mcq") {
-        quizData.options = quizForm.options?.filter(opt => opt.trim()) || [];
-      }
 
       await setDoc(quizRef, quizData);
       setQuizzes(prev => prev.map(q => q.id === editingQuizId ? { ...quizData, id: editingQuizId } : q));
@@ -607,9 +640,9 @@ export default function ModuleDetailPage() {
                 {editType === "list" && (
                   <textarea
                     name="list"
-                    value={editContentForm.items?.join(", ") || ""}
+                    value={editContentForm.list || ""}
                     onChange={(e) =>
-                      setEditContentForm({ ...editContentForm, items: e.target.value.split(",").map((i) => i.trim()) })
+                      setEditContentForm({ ...editContentForm, list: e.target.value })
                     }
                     placeholder="Comma-separated list"
                     style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc", resize: "vertical" }}
@@ -681,15 +714,15 @@ export default function ModuleDetailPage() {
                 </p>
                 <p>
                   <strong>Content:</strong>{" "}
-                  {block.type === "markdown"
+                  {block.type === "markdown" && typeof block.content === "object" && "markdown" in block.content
                     ? block.content.markdown
-                    : block.type === "video"
+                    : block.type === "video" && typeof block.content === "object" && "title" in block.content && "url" in block.content
                     ? `${block.content.title} (${block.content.url})`
-                    : block.type === "list"
+                    : block.type === "list" && typeof block.content === "object" && "items" in block.content
                     ? block.content.items.join(", ")
-                    : block.type === "quote"
+                    : block.type === "quote" && typeof block.content === "object" && "text" in block.content
                     ? `"${block.content.text}"`
-                    : block.content.text}
+                    : typeof block.content === "string" ? block.content : JSON.stringify(block.content)}
                 </p>
                 <p>
                   <strong>Order:</strong> {block.order}
