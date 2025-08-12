@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import Image from "next/image";
 
 interface Course {
   title: string;
@@ -76,18 +77,17 @@ export default function CourseDetailPage() {
 
         const modulesRef = collection(courseRef, "modules");
         const modulesSnap = await getDocs(modulesRef);
-        const mods = modulesSnap.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Module[];
+        const mods = modulesSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Module[];
 
         // Sort modules by order
         const sortedMods = mods.sort((a, b) => (a.order || 0) - (b.order || 0));
         setModules(sortedMods);
 
         // Set default order for new module
-        setForm(prev => ({ ...prev, order: sortedMods.length + 1 }));
+        setForm((prev) => ({ ...prev, order: sortedMods.length + 1 }));
       } catch (err) {
         setError("Failed to load course or modules.");
         console.error(err);
@@ -132,8 +132,15 @@ export default function CourseDetailPage() {
       );
       const newModuleRef = await addDoc(modulesRef, form);
       const newModule = { ...form, id: newModuleRef.id };
-      setModules((prev) => [...prev, newModule].sort((a, b) => (a.order || 0) - (b.order || 0)));
-      setForm({ title: "", outcome: "", hasQuiz: false, order: modules.length + 1 });
+      setModules((prev) =>
+        [...prev, newModule].sort((a, b) => (a.order || 0) - (b.order || 0))
+      );
+      setForm({
+        title: "",
+        outcome: "",
+        hasQuiz: false,
+        order: modules.length + 1,
+      });
     } catch (err) {
       setError("Failed to add module.");
       console.error(err);
@@ -210,7 +217,6 @@ export default function CourseDetailPage() {
       pageTitle={course?.title || "Course Details"}
       pageDescription="Manage course information and modules. Add new modules or edit existing ones."
     >
-
       {error && (
         <p style={{ color: "red", marginBottom: "1rem" }}>
           <strong>Error: </strong>
@@ -219,7 +225,14 @@ export default function CourseDetailPage() {
       )}
 
       {loadingCourse ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            marginBottom: "1rem",
+          }}
+        >
           <span
             style={{
               width: "1.5rem",
@@ -257,14 +270,11 @@ export default function CourseDetailPage() {
                 <strong>Category:</strong> {course.category} &nbsp;|&nbsp;
                 <strong>Hours:</strong> {course.hours}
               </p>
-              <img
+              <Image
                 src={course.thumbnail}
                 alt="Course thumbnail"
-                style={{
-                  width: "200px",
-                  marginTop: "1rem",
-                  borderRadius: "4px",
-                }}
+                width={200}
+                height={100}
               />
               <div style={{ marginTop: "1rem" }}>
                 <button
@@ -300,7 +310,15 @@ export default function CourseDetailPage() {
                 backgroundColor: "#f9f9f9",
               }}
             >
-              <h2 style={{ marginBottom: "0.5rem", fontWeight: "bold", fontSize: "1.5rem" }}>Edit Course</h2>
+              <h2
+                style={{
+                  marginBottom: "0.5rem",
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                }}
+              >
+                Edit Course
+              </h2>
               <label style={{ fontWeight: "bold" }}> Title</label>
               <input
                 name="title"
@@ -489,14 +507,16 @@ export default function CourseDetailPage() {
             >
               <div>
                 <h3 style={{ margin: 0 }}>
-                  <span style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "0.2rem 0.5rem",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                    marginRight: "0.5rem"
-                  }}>
+                  <span
+                    style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "4px",
+                      fontSize: "0.8rem",
+                      marginRight: "0.5rem",
+                    }}
+                  >
                     #{mod.order || 0}
                   </span>
                   {mod.title}

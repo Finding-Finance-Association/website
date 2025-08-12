@@ -10,6 +10,7 @@ import {
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import Image from "next/image";
 
 export default function Register() {
   const router = useRouter();
@@ -41,8 +42,11 @@ export default function Register() {
         toast.success("Registration successful with Google!");
         router.push("/");
       }
-    } catch (error: any) {
-      toast.error(`Google Sign-in failed: ${error.code.split("/")[1].replace(/-/g, " ")}`);
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string'
+        ? error.code.split("/")[1].replace(/-/g, " ")
+        : "Unknown error";
+      toast.error(`Google Sign-in failed: ${errorMessage}`);
     }
   };
 
@@ -72,8 +76,11 @@ export default function Register() {
 
       toast.success("Account created successfully!");
       router.push("/");
-    } catch (error: any) {
-      toast.error(`Registration failed: ${error.code.split("/")[1].replace(/-/g, " ")}`);
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string'
+        ? error.code.split("/")[1].replace(/-/g, " ")
+        : "Unknown error";
+      toast.error(`Registration failed: ${errorMessage}`);
     }
   };
 
@@ -90,11 +97,7 @@ export default function Register() {
           onClick={handleGoogleRegister}
           className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition duration-200"
         >
-          <img
-            src="/images/google.png"
-            alt="Google logo"
-            className="mr-2 h-5 w-5"
-          />
+          <Image src="/images/google.png" alt="Google logo" className="mr-2 h-5 w-5" />
           Sign up with Google
         </button>
 

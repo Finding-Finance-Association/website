@@ -4,9 +4,10 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { auth, googleAuth, db } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -38,10 +39,11 @@ function LoginForm() {
       // Check for return URL
       const returnUrl = searchParams.get('returnUrl');
       router.push(returnUrl || "/");
-    } catch (error: any) {
-      toast.error(
-        `Login failed: ${error.code.split("/")[1].replace(/-/g, " ")}`
-      );
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string'
+        ? error.code.split("/")[1].replace(/-/g, " ")
+        : "Unknown error";
+      toast.error(`Login failed: ${errorMessage}`);
     }
   };
 
@@ -68,10 +70,11 @@ function LoginForm() {
           router.push("/register");
         }, 2500);
       }
-    } catch (error: any) {
-      toast.error(
-        `Google Sign-in failed: ${error.code.split("/")[1].replace(/-/g, " ")}`
-      );
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string'
+        ? error.code.split("/")[1].replace(/-/g, " ")
+        : "Unknown error";
+      toast.error(`Google Sign-in failed: ${errorMessage}`);
     }
   };
 
@@ -95,11 +98,7 @@ function LoginForm() {
           onClick={handleGoogleSignIn}
           className="w-full flex items-center justify-center mb-6 py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 transition duration-200"
         >
-          <img
-            src="/images/google.png"
-            alt="Google logo"
-            className="mr-2 h-5 w-5"
-          />
+          <Image src="/images/google.png" alt="Google logo" width={20} height={20} className="mr-2" />
           Sign in with Google
         </button>
 
@@ -158,7 +157,7 @@ function LoginForm() {
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
             className="text-green-600 hover:text-green-800 font-medium"

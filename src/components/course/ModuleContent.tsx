@@ -40,7 +40,13 @@ interface ModuleContentProps {
   setActiveTab: (tab: "lesson" | "quiz") => void;
   setActiveModule: (i: number) => void;
   toggleModuleCompletion: (i: number) => void;
-  quizData?: any[]; // optional if quiz exists
+  quizData?: Array<{
+    id: string;
+    type: "mcq" | "text";
+    question: string;
+    options?: string[];
+    correctAnswer: string;
+  }>; // optional if quiz exists
   isEnrolled?: boolean;
   courseId: string; // Add courseId for Zustand store
 }

@@ -4,7 +4,7 @@ import { clientDb } from '@/lib/firebase';
 import { getUserFromRequest, requireAuth } from '@/lib/auth';
 
 export async function POST(req: Request) {
-  const user = await getUserFromRequest(req as any);
+  const user = await getUserFromRequest(req);
   requireAuth(user);
 
   const { courseId, moduleId } = await req.json();

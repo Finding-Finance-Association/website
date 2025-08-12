@@ -53,31 +53,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     }
   }, [currentQuestionIndex]);
 
-  // Handle answer selection/input
-  const handleAnswerChange = useCallback(
-    (questionId: string, answer: string) => {
-      setUserAnswers((prev) => ({
-        ...prev,
-        [questionId]: answer,
-      }));
-      setShowValidation(false);
-    },
-    []
-  );
-
-  // Navigate to next question
-  const handleNext = useCallback(() => {
-    if (!hasAnswer) {
-      setShowValidation(true);
-      return;
-    }
-
-    if (isLastQuestion) {
-      handleSubmit();
-    } else {
-      setCurrentQuestionIndex((prev) => prev + 1);
-    }
-  }, [hasAnswer, isLastQuestion, userAnswers]);
 
   // Handle quiz submission
   const handleSubmit = useCallback(() => {
@@ -118,6 +93,34 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     setIsSubmitted(true);
     onSubmit?.(quizResult);
   }, [questions, userAnswers, hasAnswer, onSubmit]);
+
+  // Handle answer selection/input
+  const handleAnswerChange = useCallback(
+    (questionId: string, answer: string) => {
+      setUserAnswers((prev) => ({
+        ...prev,
+        [questionId]: answer,
+      }));
+      setShowValidation(false);
+    },
+    []
+  );
+
+  // Navigate to next question
+  const handleNext = useCallback(() => {
+    if (!hasAnswer) {
+      setShowValidation(true);
+      return;
+    }
+
+    if (isLastQuestion) {
+      handleSubmit();
+    } else {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    }
+  }, [hasAnswer, isLastQuestion, handleSubmit]);
+
+  
 
   // Reset quiz
   const handleRetry = useCallback(() => {
@@ -212,7 +215,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
 
             {/* Question Review */}
             <div className="space-y-4">
-              {questions.map((question, index) => {
+              {questions.map((question) => {
                 const result = results.answers.find(
                   (a) => a.questionId === question.id
                 );

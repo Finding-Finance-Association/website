@@ -1,4 +1,4 @@
-import { FiClock, FiAward } from "react-icons/fi";
+import { FiAward } from "react-icons/fi";
 
 interface CourseHeaderProps {
   title: string;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Event } from "@/app/api/events/route";
-import { Edit, Trash2, Calendar, MapPin, Users, DollarSign, Clock } from "lucide-react";
+import { Edit, Trash2, Calendar, MapPin, DollarSign, Clock } from "lucide-react";
 
 interface EventsAdminTableProps {
   events: Event[];

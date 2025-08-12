@@ -17,7 +17,7 @@ export async function GET(req: Request){
         const enrolledCourseIds = progressSnap.docs.map((doc) => doc.id)
         return NextResponse.json({enrolledCourseIds})
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({err: "User not Found"}, {status: 500})
     }
 }

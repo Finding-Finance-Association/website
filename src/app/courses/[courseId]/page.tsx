@@ -124,7 +124,7 @@ export default function CourseDetailsPage() {
       }
     };
     fetchModules();
-  }, [courseId]);
+  }, [courseId, setLoadingStore]);
 
   useEffect(()=>{
     if(user?.uid && courseId){
@@ -139,7 +139,7 @@ export default function CourseDetailsPage() {
     if (course && courseId) {
       setEnrolled(user.isEnrolled(courseId));
     }
-  }, [courseId, user.enrolledCourseIds, !!course]);
+  }, [courseId, user.enrolledCourseIds, course, user]);
 
   if (loading) {
     return (

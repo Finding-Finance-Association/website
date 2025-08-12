@@ -1,14 +1,22 @@
 "use client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import NewsletterCard from "@/components/newsletter/NewsletterCard";
 import TitleCard from "@/components/TitleCard";
 
+// Define the Newsletter type
+interface Newsletter {
+  date: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+}
+
 export default function NewsLetterPage() {
-  const [allNewsletters, setAllNewsletters] = useState<Newsletter[]>([]);
-  const [showNewsletters, setShowNewsletters] = useState(false);
+  const [allNewsletters] = useState<Newsletter[]>([]);
+  // const [showNewsletters, setShowNewsletters] = useState(false);
 
 
   // const allNewsletters = [

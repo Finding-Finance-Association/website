@@ -28,7 +28,6 @@ async function getEvents(): Promise<Event[]> {
 
 // Metadata for SEO
 export const metadata: Metadata = {
-  title: "Events | FFA Learning Platform",
   description:
     "Discover upcoming workshops, seminars, and training events. Join our community of learners and professionals.",
   keywords:

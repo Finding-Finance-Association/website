@@ -1,5 +1,5 @@
 import React from "react";
-import { Calendar, MapPin, Users, Clock } from "lucide-react";
+import { Calendar, MapPin, Clock } from "lucide-react";
 import { Event } from "@/app/api/events/route";
 
 interface PastEventItemProps {

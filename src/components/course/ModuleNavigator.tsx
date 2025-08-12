@@ -1,19 +1,25 @@
 // components/course/ModuleNavigator.tsx
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiCheck, FiCheckCircle, FiMenu, FiTarget, FiX } from "react-icons/fi";
+import { FiCheck, FiCheckCircle, FiTarget, FiX } from "react-icons/fi";
 
 interface Module {
   title: string;
   outcome?: string;
   contentType?: string;
-  quizzes?: any[];
+  quizzes?: Array<{
+    id: string;
+    type: "mcq" | "text";
+    question: string;
+    options?: string[];
+    correctAnswer: string;
+  }>;
 }
 
 interface ModuleNavigatorProps {
   modules: Module[];
   activeModule: number;
-  completedModules: Set<number> | number[] | any; // Allow any type for compatibility
+  completedModules: Set<number> | number[];
   activeTab: "lesson" | "quiz";
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
@@ -45,7 +51,7 @@ export default function ModuleNavigator({
       return completedModules.includes(index);
     }
 
-    if (completedModules && typeof completedModules.has === 'function') {
+    if (completedModules && typeof completedModules.has === "function") {
       return completedModules.has(index);
     }
 
@@ -62,7 +68,7 @@ export default function ModuleNavigator({
       return completedModules.length;
     }
 
-    if (completedModules && typeof completedModules.size === 'number') {
+    if (completedModules && typeof completedModules.size === "number") {
       return completedModules.size;
     }
 
@@ -168,19 +174,24 @@ export default function ModuleNavigator({
                           </div>
                         )}
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onToggleComplete(index);
-                        }}
-                        className={`p-1 rounded-full transition-colors ${
-                          moduleCompleted
-                            ? "text-emerald-600 hover:bg-emerald-100"
-                            : "text-gray-400 hover:bg-gray-100"
-                        }`}
-                      >
-                        <FiCheckCircle className="w-4 h-4" />
-                      </button>
+                      <div className="relative group inline-block">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleComplete(index);
+                          }}
+                          className={`p-1 rounded-full transition-colors  ${
+                            moduleCompleted
+                              ? "text-emerald-600 hover:bg-emerald-100"
+                              : "text-gray-400 hover:bg-gray-100"
+                          }`}
+                        >
+                          <FiCheckCircle className="w-4 h-4" />
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            Mark as complete.
+                          </div>
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
 

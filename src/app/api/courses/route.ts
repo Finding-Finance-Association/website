@@ -10,7 +10,7 @@ export async function GET() {
       ...doc.data()
     }))
     return NextResponse.json(courses)
-  } catch (err) {
+  } catch {
     return NextResponse.json({err: 'Failed to fetch courses'}, {status: 500})
   }
   

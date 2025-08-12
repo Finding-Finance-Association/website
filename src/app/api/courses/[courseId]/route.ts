@@ -5,7 +5,10 @@ import { db } from "@/lib/firebase";
 // Force Node.js runtime
 export const runtime = "nodejs";
 
-export async function GET(request: Request, context: { params: { courseId: string } }) {
+export async function GET(
+  _request: Request,
+  context: { params: Promise<{ courseId: string }> }
+) {
   const { courseId } = await context.params;
 
   try {
@@ -82,8 +85,8 @@ export async function GET(request: Request, context: { params: { courseId: strin
       ...courseData,
       modules,
     });
-  } catch (error: any) {
-    console.error("❌ Error fetching Modules:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error fetching Modules:", error instanceof Error ? error.message : String(error));
     return NextResponse.json(
       { error: "Failed to fetch course and modules" },
       { status: 500 }
