@@ -27,6 +27,7 @@ export default function CourseCard({ course, enrolled }: Props & { enrolled: boo
           src={course.thumbnail}
           alt={course.title}
           fill
+          unoptimized
           className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           priority

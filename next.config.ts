@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
         hostname: 'images.ctfassets.net',
       },
     ],
+    unoptimized: true,
   },
 };
 
