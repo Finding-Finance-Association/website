@@ -25,7 +25,6 @@ export default function Footer() {
 								<Link href={"/"} className="hover:text-green-700">Home</Link>
 								<Link href={"/courses"} className="hover:text-green-700">Courses</Link>
 								<Link href={"/events"} className="hover:text-green-700">Events</Link>
-								<Link href={"/newsletters"} className="hover:text-green-700">Newsletters</Link>
 							</div>
 
 							<div className="flex-col space-y-3 text-gray-800 ml-auto">
