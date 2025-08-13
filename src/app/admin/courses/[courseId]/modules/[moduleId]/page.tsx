@@ -119,7 +119,7 @@ export default function ModuleDetailPage() {
         : type === "video"
         ? { title: contentForm.videoTitle || "", url: contentForm.videoUrl || "" }
         : type === "list"
-        ? { items: contentForm.list?.split(",").map((item: string) => item.trim()) || [] }
+        ? { items: contentForm.list?.split("&,").map((item: string) => item.trim()) || [] }
         : type === "quote"
         ? { text: contentForm.quote || "" }
         : contentForm.text || "";
@@ -174,7 +174,7 @@ export default function ModuleDetailPage() {
         : editType === "video"
         ? { title: editContentForm.videoTitle || "", url: editContentForm.videoUrl || "" }
         : editType === "list"
-        ? { items: editContentForm.list?.split(",").map((item: string) => item.trim()) || [] }
+        ? { items: editContentForm.list?.split("&,").map((item: string) => item.trim()) || [] }
         : editType === "quote"
         ? { text: editContentForm.quote || "" }
         : editContentForm.text || "";

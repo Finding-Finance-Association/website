@@ -211,7 +211,7 @@ export default function CoursesPage() {
                       <span>
                         {filteredCourses.length} course
                         {filteredCourses.length !== 1 ? "s" : ""} found in{" "}
-                        {view === "my" ? "My Courses" : "All Courses"} for "{search}"
+                        {view === "my" ? "My Courses" : "All Courses"} for &quot;{search}&quot;
                       </span>
                     ) : (
                       <span>
@@ -255,7 +255,7 @@ export default function CoursesPage() {
                         </div>
                         <h3 className="text-2xl font-semibold text-slate-700">No courses found</h3>
                         <p className="text-slate-400 w-2/3 mx-auto">
-                          We couldn't find any courses matching your search criteria. Try adjusting your filters or
+                          We couldn&apos;t find any courses matching your search criteria. Try adjusting your filters or
                           search terms.
                         </p>
                         <motion.button
