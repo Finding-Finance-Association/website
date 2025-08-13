@@ -72,7 +72,6 @@ export default function Header() {
     { href: "/", label: "Home" },
     { href: "/courses", label: "Courses" },
     { href: "/events", label: "Events" },
-    { href: "/newsletters", label: "Newsletters" },
   ];
 
   // Listen for Firebase auth state changes to get the actual Firebase User object
