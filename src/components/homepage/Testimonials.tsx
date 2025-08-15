@@ -5,24 +5,21 @@ import { Star } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Alex Thompson",
-    role: "Finance Student, NYU",
+    name: "WashU Student 25",
     content:
-      "FFA's mentorship program completely transformed my understanding of finance careers. The industry insights were invaluable.",
+      "The FFA Speaker Series has completely opened my eyes to the wide range of careers in finance. Hearing directly from such impressive and accomplished speakers has made me much more knowledgeable about the industry and far more confident approaching it. Every session leaves me inspired and better prepared for my future.",
     rating: 5,
   },
   {
-    name: "Maria Garcia",
-    role: "Recent Graduate, Columbia",
+    name: "Brown Student 25",
     content:
-      "The networking events and workshops provided by FFA gave me the confidence and connections I needed to land my dream job.",
+      "I read the FFA newsletter every single week, and the Deal Flow section has become my go-to source for staying on top of market activity. It’s helped me walk into interviews feeling prepared and able to speak confidently about recent deals and industry trends.",
     rating: 5,
   },
   {
-    name: "James Wilson",
-    role: "Finance Student, Harvard",
+    name: "WashU Student 25",
     content:
-      "Thanks to FFA's guidance, I discovered my passion for investment banking and secured an internship at a top firm.",
+      "My mentor through FFA has been an incredible resource—both professionally and personally. Over the past year, we’ve developed a great friendship, and their guidance has helped me navigate career decisions, refine my resume, and build the skills I need to succeed.",
     rating: 5,
   },
 ];
@@ -50,7 +47,7 @@ export default function Testimonials() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
-              key={testimonial.name}
+              key={index}
               className="bg-white rounded-2xl p-8 shadow-xl"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -74,7 +71,6 @@ export default function Testimonials() {
                 <p className="font-semibold text-gray-900">
                   {testimonial.name}
                 </p>
-                <p className="text-gray-600 text-sm">{testimonial.role}</p>
               </div>
             </motion.div>
           ))}
