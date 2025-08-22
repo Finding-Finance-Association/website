@@ -10,7 +10,7 @@ import TitleCard from "@/components/TitleCard";
 // Server-side data fetching
 async function getEvents(): Promise<Event[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const response = await fetch(`${baseUrl}/api/events`, {
       next: { revalidate: 60 },
     });
